@@ -5,28 +5,33 @@ var previous_mouse_mode: Input.MouseMode = Input.MOUSE_MODE_VISIBLE
 var purchased_options: Dictionary = {}
 
 @onready var close_button: Button = %CloseButton
-@onready var terrain_list: VBoxContainer = %TerrainList
+@onready var terrain_list: VBoxContainer = $MarginContainer/VBox/TabContainer/Terrains/TerrainList
+@onready var employee_list: VBoxContainer = $MarginContainer/VBox/TabContainer/Employés/EmployeeList
 @onready var game_manager: Node = get_node_or_null("/root/Main/GameManager")
 @onready var bonus_display: Node = get_node_or_null("/root/Main/TerrainBonusDisplay")
 
 # Prix des terrains
 const TERRAIN_PRICES: Dictionary = {
 	"SmallPlot": 150,
-	"LargePlot": 600
+	"LargePlot": 600,
+	"Farmer": 1000
 }
 
 const TERRAIN_BONUS_DATA: Dictionary = {
 	"SmallPlot": {
-		"label": "Parcelle fertile +2/s",
-		"cps": 2.0,
-		"instant": 0,
+		"label": "Parcelle fertile",
+		"description": "Un sol riche pour cultiver vos cactus.\nRécolte: 50 cactus / 5s",
 		"field_type": "small"
 	},
 	"LargePlot": {
-		"label": "Dune luxuriante +10/s",
-		"cps": 10.0,
-		"instant": 0,
+		"label": "Dune luxuriante",
+		"description": "Une vaste étendue irriguée.\nRécolte: 250 cactus / 8s",
 		"field_type": "large"
+	},
+	"Farmer": {
+		"label": "Fermier Cactus",
+		"description": "Un expert qui plante et récolte automatiquement.",
+		"type": "employee"
 	}
 }
 
@@ -38,11 +43,14 @@ func _ready():
 	visible = false
 
 func _wire_buy_buttons():
-	for option in terrain_list.get_children():
-		if option.has_node(BUY_BUTTON_PATH):
-			var button := option.get_node(BUY_BUTTON_PATH) as Button
-			if button:
-				button.pressed.connect(_on_buy_pressed.bind(option.name))
+	var all_lists = [terrain_list, employee_list]
+	for list in all_lists:
+		if not list: continue
+		for option in list.get_children():
+			if option.has_node(BUY_BUTTON_PATH):
+				var button := option.get_node(BUY_BUTTON_PATH) as Button
+				if button:
+					button.pressed.connect(_on_buy_pressed.bind(option.name))
 
 func open_menu():
 	if is_open:
@@ -78,13 +86,10 @@ func _on_buy_pressed(option_name: String):
 	if game_manager and game_manager.cactus_count >= price:
 		game_manager.add_cactus(-price)
 		print("🎉 Achat réussi:", option_name)
-		var bonus_data: Dictionary = TERRAIN_BONUS_DATA.get(option_name, {})
-		var bonus_label: String = bonus_data.get("label", "Bonus débloqué")
-		if not bonus_data.is_empty() and game_manager.has_method("apply_terrain_bonus"):
-			game_manager.apply_terrain_bonus(option_name, bonus_data)
-		var field_type: String = bonus_data.get("field_type", "small")
-		if bonus_display and bonus_display.has_method("show_bonus"):
-			bonus_display.show_bonus(option_name, bonus_label, field_type)
+		
+		if game_manager.has_method("unlock_terrain"):
+			game_manager.unlock_terrain(option_name)
+			
 		_handle_option_purchased(option_name)
 		_update_button_states()
 	else:
@@ -94,24 +99,30 @@ func _update_button_states() -> void:
 	if not game_manager:
 		return
 	
-	for option in terrain_list.get_children():
-		if purchased_options.has(option.name):
-			option.queue_free()
-			continue
-		if option.has_node(BUY_BUTTON_PATH):
-			var button := option.get_node(BUY_BUTTON_PATH) as Button
-			var price: int = TERRAIN_PRICES.get(option.name, 0)
-			var can_afford: bool = game_manager.cactus_count >= price
-			
-			button.disabled = not can_afford
-			button.modulate = Color(1, 1, 1, 1.0 if can_afford else 0.4)
+	var all_lists = [terrain_list, employee_list]
+	for list in all_lists:
+		if not list: continue
+		for option in list.get_children():
+			if purchased_options.has(option.name):
+				option.queue_free()
+				continue
+			if option.has_node(BUY_BUTTON_PATH):
+				var button := option.get_node(BUY_BUTTON_PATH) as Button
+				var price: int = TERRAIN_PRICES.get(option.name, 0)
+				var can_afford: bool = game_manager.cactus_count >= price
+				
+				button.disabled = not can_afford
+				button.modulate = Color(1, 1, 1, 1.0 if can_afford else 0.4)
 
 func _handle_option_purchased(option_name: String) -> void:
 	purchased_options[option_name] = true
 	_remove_option_from_ui(option_name)
 
 func _remove_option_from_ui(option_name: String) -> void:
-	for option in terrain_list.get_children():
-		if option.name == option_name:
-			option.queue_free()
-			return
+	var all_lists = [terrain_list, employee_list]
+	for list in all_lists:
+		if not list: continue
+		for option in list.get_children():
+			if option.name == option_name:
+				option.queue_free()
+				return

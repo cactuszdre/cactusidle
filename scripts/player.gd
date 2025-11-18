@@ -5,7 +5,9 @@ const ACCELERATION := 12.0
 const AIR_CONTROL := 0.35
 const GRAVITY := 22.0
 const JUMP_SPEED := 10.0
-const MOUSE_SENSITIVITY := 0.005
+var mouse_sensitivity: float = 0.005
+
+const SPRINT_SPEED := 12.0
 
 @onready var cam_pivot: Node3D = $CameraPivot
 
@@ -19,13 +21,9 @@ func _ready() -> void:
 	cam_pivot.rotation = Vector3(pitch, 0.0, 0.0)
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
-		return
-
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		yaw -= event.relative.x * MOUSE_SENSITIVITY
-		pitch = clamp(pitch - event.relative.y * MOUSE_SENSITIVITY, -1.2, 1.2)
+		yaw -= event.relative.x * mouse_sensitivity
+		pitch = clamp(pitch - event.relative.y * mouse_sensitivity, -1.2, 1.2)
 		rotation.y = yaw
 		cam_pivot.rotation = Vector3(pitch, 0.0, 0.0)
 
@@ -57,7 +55,11 @@ func _compute_desired_velocity(input_vector: Vector2) -> Vector3:
 	if input_vector == Vector2.ZERO:
 		return Vector3.ZERO
 
+	var current_speed := MOVE_SPEED
+	if Input.is_key_pressed(KEY_SHIFT):
+		current_speed = SPRINT_SPEED
+
 	var forward := -transform.basis.z
 	var right := transform.basis.x
 	var move_direction := (forward * input_vector.y + right * input_vector.x).normalized()
-	return move_direction * MOVE_SPEED
+	return move_direction * current_speed
