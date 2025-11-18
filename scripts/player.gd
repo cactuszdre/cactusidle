@@ -66,8 +66,11 @@ func _physics_process(delta):
 		velocity.x = lerp(velocity.x, 0.0, 0.2)
 		velocity.z = lerp(velocity.z, 0.0, 0.2)
 	
-	# Gravité (sans saut pour éviter l'erreur)
-	if not is_on_floor():
+	# Gravité et saut
+	if is_on_floor():
+		if Input.is_action_just_pressed("ui_accept"):
+			velocity.y = JUMP_SPEED
+	else:
 		velocity.y -= GRAVITY * delta
 	
 	move_and_slide()

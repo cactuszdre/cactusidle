@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dvr746oenhjrb"]
+[gd_scene load_steps=20 format=3 uid="uid://dvr746oenhjrb"]
 
 [ext_resource type="Script" uid="uid://be2xmlaehwb6i" path="res://scripts/cactus_aura.gd" id="1_k0qvd"]
 
@@ -56,6 +56,21 @@ point_count = 3
 [sub_resource type="Gradient" id="Gradient_particle_color"]
 offsets = PackedFloat32Array(0, 0.5, 1)
 colors = PackedColorArray(0.29, 0.93, 0.51, 1, 0.29, 0.93, 0.51, 0.7, 0.29, 0.93, 0.51, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_particle_mesh"]
+transparency = 1
+shading_mode = 0
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 1, 1, 1)
+emission_enabled = true
+emission = Color(0.29, 0.93, 0.51, 1)
+emission_energy_multiplier = 1.5
+billboard_mode = 3
+
+[sub_resource type="QuadMesh" id="QuadMesh_particle"]
+material = SubResource("StandardMaterial3D_particle_mesh")
+size = Vector2(0.5, 0.5)
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_aura"]
 emission_shape = 2
@@ -144,6 +159,7 @@ amount = 100
 lifetime = 3.0
 visibility_aabb = AABB(-10, 0, -10, 20, 10, 20)
 process_material = SubResource("ParticleProcessMaterial_aura")
+draw_pass_1 = SubResource("QuadMesh_particle")
 
 [node name="AuraCircle" type="MeshInstance3D" parent="Aura"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
