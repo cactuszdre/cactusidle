@@ -1,123 +1,41 @@
 extends Node3D
 
-@export var anchors_root: NodePath
-@export var podium_height: float = 0.25
+@export var fields_root: NodePath
+@export var label_node_name: String = "Label"
 
-var _anchors: Array[Node3D] = []
-var _next_index: int = 0
-var _podium_material: StandardMaterial3D
-var _crystal_materials: Dictionary = {}
+var _fields: Dictionary = {}
 
 func _ready() -> void:
-	_podium_material = _build_podium_material()
-	_cache_anchors()
+	_cache_fields()
+	_set_all_visible(false)
 
-func show_bonus(option_name: String, description: String) -> void:
-	if _anchors.is_empty():
+func show_bonus(option_name: String, description: String, field_type: String = "") -> void:
+	if _fields.is_empty():
+		_cache_fields()
+	var field: Node3D = _fields.get(option_name, null)
+	if field == null:
 		return
-	var anchor := _anchors[_next_index % _anchors.size()]
-	_next_index += 1
-	_spawn_bonus_visual(anchor, option_name, description)
+	field.visible = true
+	_apply_description(field, description)
 
-func _cache_anchors() -> void:
-	_anchors.clear()
-	if anchors_root.is_empty():
+func _cache_fields() -> void:
+	_fields.clear()
+	if fields_root.is_empty():
 		return
-	var root := get_node_or_null(anchors_root)
+	var root := get_node_or_null(fields_root)
 	if root:
 		for child in root.get_children():
 			if child is Node3D:
-				_anchors.append(child)
+				_fields[child.name] = child
 
-func _spawn_bonus_visual(anchor: Node3D, option_name: String, description: String) -> void:
-	for child in anchor.get_children():
-		child.queue_free()
-	
-	var podium := _create_podium()
-	anchor.add_child(podium)
-	
-	var crystal := _create_crystal(option_name)
-	anchor.add_child(crystal)
-	
-	var label := _create_label(option_name, description)
-	anchor.add_child(label)
-	
-	var light := _create_light(option_name)
-	anchor.add_child(light)
+func _set_all_visible(state: bool) -> void:
+	for field in _fields.values():
+		field.visible = state
 
-func _create_podium() -> MeshInstance3D:
-	var mesh_instance := MeshInstance3D.new()
-	var mesh := CylinderMesh.new()
-	mesh.top_radius = 0.6
-	mesh.bottom_radius = 0.6
-	mesh.height = podium_height
-	mesh_instance.mesh = mesh
-	mesh_instance.material_override = _podium_material
-	mesh_instance.position = Vector3(0, podium_height * 0.5, 0)
-	return mesh_instance
-
-func _create_crystal(option_name: String) -> MeshInstance3D:
-	var mesh_instance := MeshInstance3D.new()
-	var mesh := SphereMesh.new()
-	mesh.radius = 0.35
-	mesh_instance.mesh = mesh
-	mesh_instance.position = Vector3(0, podium_height + 0.45, 0)
-	mesh_instance.scale = Vector3(0.8, 1.2, 0.8)
-	mesh_instance.material_override = _get_crystal_material(option_name)
-	return mesh_instance
-
-func _create_label(option_name: String, description: String) -> Label3D:
-	var label := Label3D.new()
-	label.text = _format_bonus_text(option_name, description)
-	label.position = Vector3(0, podium_height + 1.1, 0)
-	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	label.modulate = Color(0.95, 0.85, 0.6, 1)
-	label.outline_modulate = Color(0, 0, 0, 0.7)
-	label.outline_size = 6
-	label.font_size = 42
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	return label
-
-func _create_light(option_name: String) -> OmniLight3D:
-	var light := OmniLight3D.new()
-	light.light_energy = 1.6
-	light.light_color = _get_color_for(option_name)
-	light.shadow_enabled = false
-	light.omni_range = 5.0
-	light.position = Vector3(0, podium_height + 0.3, 0)
-	return light
-
-func _format_bonus_text(option_name: String, description: String) -> String:
-	return "%s\n%s" % [option_name, description]
-
-func _build_podium_material() -> StandardMaterial3D:
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.25, 0.18, 0.12, 1)
-	mat.metallic = 0.1
-	mat.roughness = 0.8
-	mat.clearcoat = 0.3
-	return mat
-
-func _get_crystal_material(option_name: String) -> StandardMaterial3D:
-	if _crystal_materials.has(option_name):
-		return _crystal_materials[option_name]
-	var mat := StandardMaterial3D.new()
-	var color := _get_color_for(option_name)
-	mat.albedo_color = color
-	mat.emission_enabled = true
-	mat.emission = color * 1.5
-	mat.emission_energy = 1.2
-	mat.metallic = 0.2
-	mat.roughness = 0.25
-	_crystal_materials[option_name] = mat
-	return mat
-
-func _get_color_for(option_name: String) -> Color:
-	match option_name:
-		"SmallPlot":
-			return Color(0.35, 0.85, 0.55, 1)
-		"LargePlot":
-			return Color(0.95, 0.65, 0.25, 1)
-		_:
-			return Color(0.7, 0.8, 1.0, 1)
+func _apply_description(field: Node3D, description: String) -> void:
+	if description.is_empty() or label_node_name.is_empty():
+		return
+	if field.has_node(label_node_name):
+		var label := field.get_node(label_node_name)
+		if label is Label3D:
+			label.text = description
