@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://cfivm8uwuhy4g"]
+[gd_scene load_steps=45 format=3 uid="uid://cfivm8uwuhy4g"]
 
 [ext_resource type="PackedScene" uid="uid://dvr746oenhjrb" path="res://scenes/cactus_giant.tscn" id="1_0wfyh"]
 [ext_resource type="Script" uid="uid://c6todyf7mjm1x" path="res://scripts/game_manager.gd" id="2_sugp2"]
@@ -95,33 +95,47 @@ bottom_radius = 0.32
 height = 1.8
 radial_segments = 12
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_field_sign_post"]
+albedo_color = Color(0.352941, 0.243137, 0.156863, 1)
+metallic = 0.04
+roughness = 0.65
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_field_sign_post"]
+top_radius = 0.06
+bottom_radius = 0.08
+height = 1.4
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_field_sign_board"]
+albedo_color = Color(0.870588, 0.756863, 0.513726, 1)
+metallic = 0.05
+roughness = 0.45
+
+[sub_resource type="BoxMesh" id="BoxMesh_field_sign_board"]
+size = Vector3(1.8, 0.45, 0.08)
+
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_shop"]
 height = 2.5
 radius = 4.5
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop"]
-albedo_color = Color(0.611765, 0.415686, 0.25098, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop_sign_board"]
-albedo_color = Color(0.419608, 0.290196, 0.176471, 1)
-roughness = 0.55
-metallic = 0.08
-emission_enabled = true
-emission = Color(0.12549, 0.0862745, 0.0431373, 1)
-emission_energy_multiplier = 0.1
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop_base"]
 albedo_color = Color(0.317647, 0.211765, 0.129412, 1)
-roughness = 0.7
 metallic = 0.05
+roughness = 0.7
 emission_enabled = true
 emission = Color(0.0901961, 0.0588235, 0.027451, 1)
 emission_energy_multiplier = 0.2
 
+[sub_resource type="BoxMesh" id="BoxMesh_shop_base"]
+size = Vector3(6, 0.6, 4.5)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop_counter"]
 albedo_color = Color(0.72549, 0.482353, 0.282353, 1)
-roughness = 0.45
 metallic = 0.08
+roughness = 0.45
+
+[sub_resource type="BoxMesh" id="BoxMesh_shop_counter"]
+size = Vector3(4.2, 1.2, 2.6)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop_canopy"]
 albedo_color = Color(0.858824, 0.32549, 0.223529, 1)
@@ -130,41 +144,13 @@ emission_enabled = true
 emission = Color(0.537255, 0.188235, 0.101961, 1)
 emission_energy_multiplier = 0.35
 
+[sub_resource type="BoxMesh" id="BoxMesh_shop_canopy"]
+size = Vector3(5.5, 0.25, 3.2)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop_trim"]
 albedo_color = Color(0.92549, 0.796078, 0.439216, 1)
 metallic = 0.4
 roughness = 0.25
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop_banner"]
-albedo_color = Color(0.937255, 0.67451, 0.223529, 1)
-emission_enabled = true
-emission = Color(0.937255, 0.505882, 0.164706, 1)
-emission_energy_multiplier = 0.25
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_field_sign_board"]
-albedo_color = Color(0.870588, 0.756863, 0.513726, 1)
-roughness = 0.45
-metallic = 0.05
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_field_sign_post"]
-albedo_color = Color(0.352941, 0.243137, 0.156863, 1)
-roughness = 0.65
-metallic = 0.04
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop_lantern"]
-albedo_color = Color(1, 0.945098, 0.670588, 1)
-emission_enabled = true
-emission = Color(1, 0.92549, 0.533333, 1)
-emission_energy_multiplier = 1.35
-
-[sub_resource type="BoxMesh" id="BoxMesh_shop_base"]
-size = Vector3(6, 0.6, 4.5)
-
-[sub_resource type="BoxMesh" id="BoxMesh_shop_counter"]
-size = Vector3(4.2, 1.2, 2.6)
-
-[sub_resource type="BoxMesh" id="BoxMesh_shop_canopy"]
-size = Vector3(5.5, 0.25, 3.2)
 
 [sub_resource type="BoxMesh" id="BoxMesh_shop_banner"]
 size = Vector3(0.3, 2.2, 1.35)
@@ -175,30 +161,37 @@ bottom_radius = 0.14
 height = 4.0
 radial_segments = 12
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop_banner"]
+albedo_color = Color(0.937255, 0.67451, 0.223529, 1)
+emission_enabled = true
+emission = Color(0.937255, 0.505882, 0.164706, 1)
+emission_energy_multiplier = 0.25
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop_lantern"]
+albedo_color = Color(1, 0.945098, 0.670588, 1)
+emission_enabled = true
+emission = Color(1, 0.92549, 0.533333, 1)
+emission_energy_multiplier = 1.35
+
 [sub_resource type="SphereMesh" id="SphereMesh_shop_lamp"]
 radius = 0.32
 height = 0.64
 radial_segments = 16
 rings = 12
 
-[sub_resource type="BoxMesh" id="BoxMesh_shop"]
-material = SubResource("StandardMaterial3D_shop")
+[sub_resource type="BoxShape3D" id="BoxShape3D_shop_building"]
 size = Vector3(4, 3, 4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop_sign_board"]
+albedo_color = Color(0.419608, 0.290196, 0.176471, 1)
+metallic = 0.08
+roughness = 0.55
+emission_enabled = true
+emission = Color(0.12549, 0.0862745, 0.0431373, 1)
+emission_energy_multiplier = 0.1
 
 [sub_resource type="BoxMesh" id="BoxMesh_shop_sign_board"]
 size = Vector3(3.2, 0.8, 0.12)
-
-[sub_resource type="BoxMesh" id="BoxMesh_field_sign_board"]
-size = Vector3(1.8, 0.45, 0.08)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_field_sign_post"]
-top_radius = 0.06
-bottom_radius = 0.08
-height = 1.4
-radial_segments = 12
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_shop_building"]
-size = Vector3(4, 3, 4)
 
 [node name="Main" type="Node3D"]
 
@@ -491,7 +484,7 @@ fields_root = NodePath("Fields")
 [node name="Fields" type="Node3D" parent="TerrainBonusDisplay"]
 
 [node name="SmallPlot" type="Node3D" parent="TerrainBonusDisplay/Fields"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 0)
 visible = false
 
 [node name="Soil" type="MeshInstance3D" parent="TerrainBonusDisplay/Fields/SmallPlot"]
@@ -509,13 +502,22 @@ transform = Transform3D(0.5, 0, 0, 0, 0.85, 0, 0, 0, 0.5, 0.5, 0.2, 0.3)
 material_override = SubResource("StandardMaterial3D_cactus")
 mesh = SubResource("CylinderMesh_cactus")
 
+[node name="SignPost" type="MeshInstance3D" parent="TerrainBonusDisplay/Fields/SmallPlot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 3.2)
+material_override = SubResource("StandardMaterial3D_field_sign_post")
+mesh = SubResource("CylinderMesh_field_sign_post")
+
+[node name="SignBoard" type="MeshInstance3D" parent="TerrainBonusDisplay/Fields/SmallPlot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 3.2)
+material_override = SubResource("StandardMaterial3D_field_sign_board")
+mesh = SubResource("BoxMesh_field_sign_board")
+
 [node name="Label" type="Label3D" parent="TerrainBonusDisplay/Fields/SmallPlot"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
-billboard = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 3.3)
 modulate = Color(0.95, 0.85, 0.6, 1)
 
 [node name="LargePlot" type="Node3D" parent="TerrainBonusDisplay/Fields"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0)
 visible = false
 
 [node name="Soil" type="MeshInstance3D" parent="TerrainBonusDisplay/Fields/LargePlot"]
@@ -540,9 +542,18 @@ transform = Transform3D(0.5, 0, 0, 0, 0.9, 0, 0, 0, 0.5, 0.1, 0.15, -0.9)
 material_override = SubResource("StandardMaterial3D_cactus")
 mesh = SubResource("CylinderMesh_cactus")
 
+[node name="SignPost" type="MeshInstance3D" parent="TerrainBonusDisplay/Fields/LargePlot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 4)
+material_override = SubResource("StandardMaterial3D_field_sign_post")
+mesh = SubResource("CylinderMesh_field_sign_post")
+
+[node name="SignBoard" type="MeshInstance3D" parent="TerrainBonusDisplay/Fields/LargePlot"]
+transform = Transform3D(1.35, 0, 0, 0, 1.1, 0, 0, 0, 1, 0, 1.5, 4)
+material_override = SubResource("StandardMaterial3D_field_sign_board")
+mesh = SubResource("BoxMesh_field_sign_board")
+
 [node name="Label" type="Label3D" parent="TerrainBonusDisplay/Fields/LargePlot"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
-billboard = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 4.1)
 modulate = Color(0.95, 0.85, 0.6, 1)
 
 [node name="Player" parent="." groups=["Player"] instance=ExtResource("3_sugp2")]
@@ -563,63 +574,61 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
 
 [node name="Base" type="MeshInstance3D" parent="Shop/Stall"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
-mesh = SubResource("BoxMesh_shop_base")
 material_override = SubResource("StandardMaterial3D_shop_base")
+mesh = SubResource("BoxMesh_shop_base")
 
 [node name="Counter" type="MeshInstance3D" parent="Shop/Stall"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
-mesh = SubResource("BoxMesh_shop_counter")
 material_override = SubResource("StandardMaterial3D_shop_counter")
+mesh = SubResource("BoxMesh_shop_counter")
 
 [node name="Canopy" type="MeshInstance3D" parent="Shop/Stall"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
-mesh = SubResource("BoxMesh_shop_canopy")
 material_override = SubResource("StandardMaterial3D_shop_canopy")
+mesh = SubResource("BoxMesh_shop_canopy")
 
 [node name="TrimFront" type="MeshInstance3D" parent="Shop/Stall"]
 transform = Transform3D(2.2, 0, 0, 0, 0.1, 0, 0, 0, 0.05, 0, 1.5, 1.8)
-mesh = SubResource("BoxMesh_shop_banner")
 material_override = SubResource("StandardMaterial3D_shop_trim")
+mesh = SubResource("BoxMesh_shop_banner")
 
 [node name="TrimBack" type="MeshInstance3D" parent="Shop/Stall"]
 transform = Transform3D(2.2, 0, 0, 0, 0.1, 0, 0, 0, 0.05, 0, 1.5, -1.8)
-mesh = SubResource("BoxMesh_shop_banner")
 material_override = SubResource("StandardMaterial3D_shop_trim")
+mesh = SubResource("BoxMesh_shop_banner")
 
 [node name="Poles" type="Node3D" parent="Shop/Stall"]
 
 [node name="PoleLeft" type="MeshInstance3D" parent="Shop/Stall/Poles"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0.0, 1.6)
-mesh = SubResource("CylinderMesh_shop_pole")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0, 1.6)
 material_override = SubResource("StandardMaterial3D_shop_trim")
+mesh = SubResource("CylinderMesh_shop_pole")
 
 [node name="PoleRight" type="MeshInstance3D" parent="Shop/Stall/Poles"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 0.0, 1.6)
-mesh = SubResource("CylinderMesh_shop_pole")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 0, 1.6)
 material_override = SubResource("StandardMaterial3D_shop_trim")
+mesh = SubResource("CylinderMesh_shop_pole")
 
 [node name="BannerLeft" type="MeshInstance3D" parent="Shop/Stall"]
 transform = Transform3D(0.3, 0, 0, 0, 2.2, 0, 0, 0, 1.35, -2.4, 0.6, 1.8)
-mesh = SubResource("BoxMesh_shop_banner")
 material_override = SubResource("StandardMaterial3D_shop_banner")
+mesh = SubResource("BoxMesh_shop_banner")
 
 [node name="BannerRight" type="MeshInstance3D" parent="Shop/Stall"]
 transform = Transform3D(0.3, 0, 0, 0, 2.2, 0, 0, 0, 1.35, 2.4, 0.6, 1.8)
-mesh = SubResource("BoxMesh_shop_banner")
 material_override = SubResource("StandardMaterial3D_shop_banner")
+mesh = SubResource("BoxMesh_shop_banner")
 
 [node name="Lantern" type="Node3D" parent="Shop/Stall"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, 0.2)
 
 [node name="LanternGlow" type="MeshInstance3D" parent="Shop/Stall/Lantern"]
-mesh = SubResource("SphereMesh_shop_lamp")
 material_override = SubResource("StandardMaterial3D_shop_lantern")
+mesh = SubResource("SphereMesh_shop_lamp")
 
 [node name="LanternLight" type="OmniLight3D" parent="Shop/Stall/Lantern"]
 light_color = Color(1, 0.870588, 0.623529, 1)
 light_energy = 4.5
-range = 10.0
-shadow_enabled = false
 
 [node name="StallCollision" type="StaticBody3D" parent="Shop"]
 
@@ -628,14 +637,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 shape = SubResource("BoxShape3D_shop_building")
 
 [node name="Sign" type="Node3D" parent="Shop"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4411793, 0.058169365, 3.6385312)
+
+[node name="Post" type="MeshInstance3D" parent="Shop/Sign"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+material_override = SubResource("StandardMaterial3D_field_sign_post")
+mesh = SubResource("CylinderMesh_field_sign_post")
+metadata/_edit_lock_ = true
 
 [node name="Board" type="MeshInstance3D" parent="Shop/Sign"]
-mesh = SubResource("BoxMesh_shop_sign_board")
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 0.667, 0, 1.4, 0)
 material_override = SubResource("StandardMaterial3D_shop_sign_board")
+mesh = SubResource("BoxMesh_shop_sign_board")
+metadata/_edit_lock_ = true
 
 [node name="Label" type="Label3D" parent="Shop/Sign"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.09)
-billboard = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0.09)
+pixel_size = 0.01
 modulate = Color(1, 0.937255, 0.807843, 1)
 text = "Échoppe"
+metadata/_edit_lock_ = true
