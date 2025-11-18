@@ -5,6 +5,21 @@ var previous_mouse_mode: Input.MouseMode = Input.MOUSE_MODE_VISIBLE
 
 @onready var close_button: Button = %CloseButton
 @onready var terrain_list: VBoxContainer = %TerrainList
+@onready var game_manager: Node = get_node_or_null("/root/Main/GameManager")
+@onready var bonus_display: Node = get_node_or_null("/root/Main/TerrainBonusDisplay")
+
+# Prix des terrains
+const TERRAIN_PRICES: Dictionary = {
+	"SmallPlot": 150,
+	"LargePlot": 600
+}
+
+const TERRAIN_BONUSES: Dictionary = {
+	"SmallPlot": "Parcelle fertile +2/s",
+	"LargePlot": "Dune luxuriante +5%"
+}
+
+const BUY_BUTTON_PATH := "Content/HBox/PriceSection/BuyButton"
 
 func _ready():
 	close_button.pressed.connect(close_menu)
@@ -13,9 +28,9 @@ func _ready():
 
 func _wire_buy_buttons():
 	for option in terrain_list.get_children():
-		if option.has_node("BuyButton"):
-			var button := option.get_node("BuyButton")
-			if button is Button:
+		if option.has_node(BUY_BUTTON_PATH):
+			var button := option.get_node(BUY_BUTTON_PATH) as Button
+			if button:
 				button.pressed.connect(_on_buy_pressed.bind(option.name))
 
 func open_menu():
@@ -25,6 +40,7 @@ func open_menu():
 	previous_mouse_mode = Input.mouse_mode
 	visible = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	_update_button_states()
 
 func close_menu():
 	if not is_open:
@@ -39,5 +55,31 @@ func toggle_menu():
 	else:
 		open_menu()
 
+func _process(_delta: float) -> void:
+	if is_open:
+		_update_button_states()
+
 func _on_buy_pressed(option_name: String):
-	print("📋 Achat simulé pour:", option_name)
+	var price: int = TERRAIN_PRICES.get(option_name, 0)
+	if game_manager and game_manager.cactus_count >= price:
+		game_manager.add_cactus(-price)
+		print("🎉 Achat réussi:", option_name)
+		var bonus_label: String = TERRAIN_BONUSES.get(option_name, "Bonus débloqué")
+		if bonus_display and bonus_display.has_method("show_bonus"):
+			bonus_display.show_bonus(option_name, bonus_label)
+		_update_button_states()
+	else:
+		print("❌ Pas assez de cactus pour:", option_name)
+
+func _update_button_states() -> void:
+	if not game_manager:
+		return
+	
+	for option in terrain_list.get_children():
+		if option.has_node(BUY_BUTTON_PATH):
+			var button := option.get_node(BUY_BUTTON_PATH) as Button
+			var price: int = TERRAIN_PRICES.get(option.name, 0)
+			var can_afford: bool = game_manager.cactus_count >= price
+			
+			button.disabled = not can_afford
+			button.modulate = Color(1, 1, 1, 1.0 if can_afford else 0.4)

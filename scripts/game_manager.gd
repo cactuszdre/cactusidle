@@ -2,7 +2,7 @@ extends Node
 
 # Ressources
 var cactus_count: int = 0
-var cactus_per_second: float = 1.0
+var cactus_per_second: float = 100.0
 
 # Références
 @onready var cactus_label = get_node("../HUD/CactusCounter")
