@@ -1,11 +1,67 @@
-[gd_scene load_steps=5 format=3 uid="uid://8edeer2dyx8r"]
+[gd_scene load_steps=17 format=3 uid="uid://8edeer2dyx8r"]
 
 [ext_resource type="Script" uid="uid://dditx6232b410" path="res://scripts/player.gd" id="1_v6fml"]
-[ext_resource type="PackedScene" uid="uid://d1fs3bwnsw5dl" path="res://models/player_character.glb" id="2_3li8b"]
+[ext_resource type="Script" path="res://scripts/player_animation.gd" id="2_anim"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mdl7e"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_v6fml"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
+albedo_color = Color(0.25, 0.45, 0.75, 1)
+metallic = 0.3
+roughness = 0.7
+rim_enabled = true
+rim = 0.8
+rim_tint = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_accent"]
+albedo_color = Color(0.85, 0.65, 0.25, 1)
+metallic = 0.2
+roughness = 0.6
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_torso"]
+material = SubResource("StandardMaterial3D_body")
+radius = 0.35
+height = 0.9
+
+[sub_resource type="SphereMesh" id="SphereMesh_head"]
+material = SubResource("StandardMaterial3D_body")
+radius = 0.25
+height = 0.5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_upper_arm"]
+material = SubResource("StandardMaterial3D_body")
+top_radius = 0.09
+bottom_radius = 0.08
+height = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_forearm"]
+material = SubResource("StandardMaterial3D_body")
+top_radius = 0.08
+bottom_radius = 0.07
+height = 0.35
+
+[sub_resource type="SphereMesh" id="SphereMesh_hand"]
+material = SubResource("StandardMaterial3D_accent")
+radius = 0.08
+height = 0.16
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_thigh"]
+material = SubResource("StandardMaterial3D_body")
+top_radius = 0.11
+bottom_radius = 0.09
+height = 0.5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_shin"]
+material = SubResource("StandardMaterial3D_body")
+top_radius = 0.09
+bottom_radius = 0.08
+height = 0.45
+
+[sub_resource type="BoxMesh" id="BoxMesh_foot"]
+material = SubResource("StandardMaterial3D_accent")
+size = Vector3(0.15, 0.12, 0.25)
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_v6fml")
@@ -14,7 +70,88 @@ script = ExtResource("1_v6fml")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_mdl7e")
 
-[node name="PlayerModel" parent="." instance=ExtResource("2_3li8b")]
+[node name="PlayerModel" type="Node3D" parent="."]
+script = ExtResource("2_anim")
+
+[node name="Torso" type="MeshInstance3D" parent="PlayerModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
+mesh = SubResource("CapsuleMesh_torso")
+
+[node name="Head" type="MeshInstance3D" parent="PlayerModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+mesh = SubResource("SphereMesh_head")
+
+[node name="ShoulderLeft" type="Node3D" parent="PlayerModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 1.4, 0)
+
+[node name="UpperArmLeft" type="MeshInstance3D" parent="PlayerModel/ShoulderLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("CylinderMesh_upper_arm")
+
+[node name="ElbowLeft" type="Node3D" parent="PlayerModel/ShoulderLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
+
+[node name="ForearmLeft" type="MeshInstance3D" parent="PlayerModel/ShoulderLeft/ElbowLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, 0)
+mesh = SubResource("CylinderMesh_forearm")
+
+[node name="HandLeft" type="MeshInstance3D" parent="PlayerModel/ShoulderLeft/ElbowLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+mesh = SubResource("SphereMesh_hand")
+
+[node name="ShoulderRight" type="Node3D" parent="PlayerModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 1.4, 0)
+
+[node name="UpperArmRight" type="MeshInstance3D" parent="PlayerModel/ShoulderRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("CylinderMesh_upper_arm")
+
+[node name="ElbowRight" type="Node3D" parent="PlayerModel/ShoulderRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
+
+[node name="ForearmRight" type="MeshInstance3D" parent="PlayerModel/ShoulderRight/ElbowRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, 0)
+mesh = SubResource("CylinderMesh_forearm")
+
+[node name="HandRight" type="MeshInstance3D" parent="PlayerModel/ShoulderRight/ElbowRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+mesh = SubResource("SphereMesh_hand")
+
+[node name="HipLeft" type="Node3D" parent="PlayerModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.7, 0)
+
+[node name="ThighLeft" type="MeshInstance3D" parent="PlayerModel/HipLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+mesh = SubResource("CylinderMesh_thigh")
+
+[node name="KneeLeft" type="Node3D" parent="PlayerModel/HipLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="ShinLeft" type="MeshInstance3D" parent="PlayerModel/HipLeft/KneeLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.225, 0)
+mesh = SubResource("CylinderMesh_shin")
+
+[node name="FootLeft" type="MeshInstance3D" parent="PlayerModel/HipLeft/KneeLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.49, 0.06)
+mesh = SubResource("BoxMesh_foot")
+
+[node name="HipRight" type="Node3D" parent="PlayerModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.7, 0)
+
+[node name="ThighRight" type="MeshInstance3D" parent="PlayerModel/HipRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+mesh = SubResource("CylinderMesh_thigh")
+
+[node name="KneeRight" type="Node3D" parent="PlayerModel/HipRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="ShinRight" type="MeshInstance3D" parent="PlayerModel/HipRight/KneeRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.225, 0)
+mesh = SubResource("CylinderMesh_shin")
+
+[node name="FootRight" type="MeshInstance3D" parent="PlayerModel/HipRight/KneeRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.49, 0.06)
+mesh = SubResource("BoxMesh_foot")
 
 [node name="CameraPivot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)

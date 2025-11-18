@@ -1,6 +1,7 @@
-[gd_scene load_steps=20 format=3 uid="uid://dvr746oenhjrb"]
+[gd_scene load_steps=17 format=3 uid="uid://dvr746oenhjrb"]
 
 [ext_resource type="Script" uid="uid://be2xmlaehwb6i" path="res://scripts/cactus_aura.gd" id="1_k0qvd"]
+[ext_resource type="Shader" uid="uid://ck5ohgnnvxck2" path="res://shaders/aura_particle.gdshader" id="2_particle"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cactus_body"]
 albedo_color = Color(0.25, 0.55, 0.25, 1)
@@ -14,11 +15,19 @@ height = 6.0
 radial_segments = 16
 rings = 8
 
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_trunk"]
+height = 6.0
+radius = 1.5
+
 [sub_resource type="SphereMesh" id="SphereMesh_segment1"]
 radius = 1.3
 height = 2.6
 radial_segments = 16
 rings = 8
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_segment_top"]
+radius = 1.3
+height = 2.6
 
 [sub_resource type="SphereMesh" id="SphereMesh_segment2"]
 radius = 1.1
@@ -27,19 +36,9 @@ radial_segments = 16
 rings = 8
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_arm"]
-top_radius = 0.5
 bottom_radius = 0.6
 height = 2.5
 radial_segments = 12
-rings = 4
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_trunk"]
-height = 6.0
-radius = 1.5
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_segment_top"]
-radius = 1.3
-height = 2.6
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_arm"]
 radius = 0.6
@@ -49,42 +48,37 @@ height = 2.5
 height = 3.0
 radius = 10.0
 
-[sub_resource type="Curve" id="Curve_particle_scale"]
-_data = [Vector2(0, 0.8), 0.0, 0.0, 0, 0, Vector2(0.5, 1.0), 0.0, 0.0, 0, 0, Vector2(1, 0.2), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="Gradient" id="Gradient_particle_color"]
-offsets = PackedFloat32Array(0, 0.5, 1)
-colors = PackedColorArray(0.29, 0.93, 0.51, 1, 0.29, 0.93, 0.51, 0.7, 0.29, 0.93, 0.51, 0)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_particle_mesh"]
-transparency = 1
-shading_mode = 0
-cull_mode = 2
-vertex_color_use_as_albedo = true
-albedo_color = Color(1, 1, 1, 1)
-emission_enabled = true
-emission = Color(0.29, 0.93, 0.51, 1)
-emission_energy_multiplier = 1.5
-billboard_mode = 3
-
-[sub_resource type="QuadMesh" id="QuadMesh_particle"]
-material = SubResource("StandardMaterial3D_particle_mesh")
-size = Vector2(0.5, 0.5)
-
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_aura"]
+particle_flag_align_y = true
 emission_shape = 2
 emission_sphere_radius = 9.5
-particle_flag_align_y = true
 direction = Vector3(0, 1, 0)
-spread = 15.0
-initial_velocity_min = 1.5
-initial_velocity_max = 2.5
-gravity = Vector3(0, 0.5, 0)
-scale_min = 0.3
-scale_max = 0.6
-scale_curve = SubResource("Curve_particle_scale")
-color_ramp = SubResource("Gradient_particle_color")
+spread = 20.0
+initial_velocity_min = 0.8
+initial_velocity_max = 1.4
+gravity = Vector3(0, 0.3, 0)
+scale_min = 0.15
+scale_max = 0.35
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_particle_mesh"]
+render_priority = 0
+shader = ExtResource("2_particle")
+shader_parameter/core_color = Color(0.29, 0.93, 0.51, 1)
+shader_parameter/edge_color = Color(0.15, 0.75, 0.95, 1)
+shader_parameter/glow_intensity = 3.2
+shader_parameter/sparkle_speed = 5.5
+shader_parameter/pulse_frequency = 2.8
+shader_parameter/edge_softness = 0.4
+shader_parameter/distortion_strength = 0.12
+
+[sub_resource type="QuadMesh" id="QuadMesh_particle"]
+material = SubResource("ShaderMaterial_particle_mesh")
+size = Vector2(0.3, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_particle"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.29, 0.93, 0.51, 1)
 
 [sub_resource type="TorusMesh" id="TorusMesh_aura"]
 inner_radius = 8.5
@@ -92,22 +86,14 @@ outer_radius = 9.5
 rings = 32
 ring_segments = 64
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_particle"]
-transparency = 1
-shading_mode = 0
-albedo_color = Color(0.29, 0.93, 0.51, 1)
-emission_enabled = true
-emission = Color(0.29, 0.93, 0.51, 1)
-emission_energy_multiplier = 2.0
-
 [node name="CactusGiant" type="Node3D"]
 
 [node name="CactusBody" type="StaticBody3D" parent="."]
 
 [node name="Trunk" type="MeshInstance3D" parent="CactusBody"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
-mesh = SubResource("CylinderMesh_trunk")
 material_override = SubResource("StandardMaterial3D_cactus_body")
+mesh = SubResource("CylinderMesh_trunk")
 
 [node name="CollisionTrunk" type="CollisionShape3D" parent="CactusBody"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
@@ -115,8 +101,8 @@ shape = SubResource("CylinderShape3D_trunk")
 
 [node name="SegmentTop" type="MeshInstance3D" parent="CactusBody"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.5, 0)
-mesh = SubResource("SphereMesh_segment1")
 material_override = SubResource("StandardMaterial3D_cactus_body")
+mesh = SubResource("SphereMesh_segment1")
 
 [node name="CollisionSegmentTop" type="CollisionShape3D" parent="CactusBody"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.5, 0)
@@ -124,13 +110,13 @@ shape = SubResource("CapsuleShape3D_segment_top")
 
 [node name="SegmentMid" type="MeshInstance3D" parent="CactusBody"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.2, 0)
-mesh = SubResource("SphereMesh_segment2")
 material_override = SubResource("StandardMaterial3D_cactus_body")
+mesh = SubResource("SphereMesh_segment2")
 
 [node name="ArmLeft" type="MeshInstance3D" parent="CactusBody"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2, 5, 0)
-mesh = SubResource("CylinderMesh_arm")
 material_override = SubResource("StandardMaterial3D_cactus_body")
+mesh = SubResource("CylinderMesh_arm")
 
 [node name="CollisionArmLeft" type="CollisionShape3D" parent="CactusBody"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2, 5, 0)
@@ -138,8 +124,8 @@ shape = SubResource("CapsuleShape3D_arm")
 
 [node name="ArmRight" type="MeshInstance3D" parent="CactusBody"]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2, 4.5, 0)
-mesh = SubResource("CylinderMesh_arm")
 material_override = SubResource("StandardMaterial3D_cactus_body")
+mesh = SubResource("CylinderMesh_arm")
 
 [node name="CollisionArmRight" type="CollisionShape3D" parent="CactusBody"]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2, 4.5, 0)
@@ -155,13 +141,15 @@ metadata/_edit_lock_ = true
 
 [node name="AuraParticles" type="GPUParticles3D" parent="Aura"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
-amount = 100
-lifetime = 3.0
-visibility_aabb = AABB(-10, 0, -10, 20, 10, 20)
+amount = 150
+lifetime = 3.5
+preprocess = 0.84
+speed_scale = 1.6
+visibility_aabb = AABB(-10, 0, -10, 20, 6, 20)
 process_material = SubResource("ParticleProcessMaterial_aura")
 draw_pass_1 = SubResource("QuadMesh_particle")
 
 [node name="AuraCircle" type="MeshInstance3D" parent="Aura"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
-mesh = SubResource("TorusMesh_aura")
 material_override = SubResource("StandardMaterial3D_particle")
+mesh = SubResource("TorusMesh_aura")
