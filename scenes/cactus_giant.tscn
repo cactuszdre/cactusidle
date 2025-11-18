@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3 uid="uid://dvr746oenhjrb"]
+
+[ext_resource type="Script" uid="uid://be2xmlaehwb6i" path="res://scripts/cactus_aura.gd" id="1_k0qvd"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5x8tw"]
+albedo_color = Color(0.1764706, 0.37254903, 0.18039216, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_56vd7"]
+material = SubResource("StandardMaterial3D_5x8tw")
+top_radius = 1.5
+height = 8.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_k0qvd"]
+height = 3.0
+radius = 10.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5x8tw"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_5x8tw"]
+top_radius = 10.0
+bottom_radius = 10.0
+height = 0.5
+rings = 8
+
+[node name="CactusGiant" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
+mesh = SubResource("CylinderMesh_56vd7")
+
+[node name="Aura" type="Area3D" parent="."]
+script = ExtResource("1_k0qvd")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Aura"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+shape = SubResource("CylinderShape3D_k0qvd")
+metadata/_edit_lock_ = true
+
+[node name="AuraVisual" type="MeshInstance3D" parent="Aura"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+material_override = SubResource("ShaderMaterial_5x8tw")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_5x8tw")
+metadata/_edit_lock_ = true
