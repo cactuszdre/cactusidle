@@ -1,8 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://cfivm8uwuhy4g"]
+[gd_scene load_steps=15 format=3 uid="uid://cfivm8uwuhy4g"]
 
 [ext_resource type="PackedScene" uid="uid://dvr746oenhjrb" path="res://scenes/cactus_giant.tscn" id="1_0wfyh"]
 [ext_resource type="Script" uid="uid://c6todyf7mjm1x" path="res://scripts/game_manager.gd" id="2_sugp2"]
 [ext_resource type="PackedScene" uid="uid://8edeer2dyx8r" path="res://scenes/Player.tscn" id="3_sugp2"]
+[ext_resource type="Script" path="res://scripts/shop.gd" id="4_0mxmm"]
+[ext_resource type="Script" path="res://scripts/shop_ui.gd" id="5_7p0a5"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_jyhfs"]
 
@@ -22,6 +24,17 @@ size = Vector2(500, 500)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_sugp2"]
 size = Vector3(50, 0, 50)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop"]
+albedo_color = Color(0.611765, 0.415686, 0.25098, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_shop"]
+material = SubResource("StandardMaterial3D_shop")
+size = Vector3(4, 3, 4)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_shop"]
+radius = 4.5
+height = 2.5
 
 [node name="Main" type="Node3D"]
 
@@ -56,5 +69,143 @@ theme_override_constants/outline_size = 2
 theme_override_font_sizes/font_size = 32
 text = "🌵 Cactus: 0"
 
+[node name="ShopPrompt" type="Label" parent="HUD"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.85
+anchor_right = 0.5
+anchor_bottom = 0.85
+offset_left = -200.0
+offset_right = 200.0
+offset_top = -20.0
+offset_bottom = 20.0
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 24
+text = "Approchez-vous de l'échoppe"
+
+[node name="ShopUI" type="Control" parent="HUD"]
+unique_name_in_owner = true
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_right = 220.0
+offset_top = -180.0
+offset_bottom = 180.0
+script = ExtResource("5_7p0a5")
+
+[node name="Panel" type="Panel" parent="HUD/ShopUI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/ShopUI/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="HUD/ShopUI/Panel/MarginContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="HUD/ShopUI/Panel/MarginContainer/VBox"]
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+text = "Échoppe du désert"
+
+[node name="Subtitle" type="Label" parent="HUD/ShopUI/Panel/MarginContainer/VBox"]
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+text = "Achetez des terrains fertiles"
+
+[node name="HSeparator" type="HSeparator" parent="HUD/ShopUI/Panel/MarginContainer/VBox"]
+
+[node name="TerrainList" type="VBoxContainer" parent="HUD/ShopUI/Panel/MarginContainer/VBox"]
+unique_name_in_owner = true
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 180)
+theme_override_constants/separation = 14
+
+[node name="SmallPlot" type="HBoxContainer" parent="HUD/ShopUI/Panel/MarginContainer/VBox/TerrainList"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="Details" type="VBoxContainer" parent="HUD/ShopUI/Panel/MarginContainer/VBox/TerrainList/SmallPlot"]
+size_flags_horizontal = 3
+
+[node name="Name" type="Label" parent="HUD/ShopUI/Panel/MarginContainer/VBox/TerrainList/SmallPlot/Details"]
+theme_override_font_sizes/font_size = 22
+text = "Parcelle sableuse"
+
+[node name="Description" type="Label" parent="HUD/ShopUI/Panel/MarginContainer/VBox/TerrainList/SmallPlot/Details"]
+theme_override_font_sizes/font_size = 16
+modulate = Color(1, 1, 1, 0.86)
+text = "Une petite zone idéale pour planter vos premiers cactus."
+
+[node name="PriceLabel" type="Label" parent="HUD/ShopUI/Panel/MarginContainer/VBox/TerrainList/SmallPlot"]
+theme_override_font_sizes/font_size = 20
+text = "150 cactus"
+
+[node name="BuyButton" type="Button" parent="HUD/ShopUI/Panel/MarginContainer/VBox/TerrainList/SmallPlot"]
+text = "Acheter"
+
+[node name="LargePlot" type="HBoxContainer" parent="HUD/ShopUI/Panel/MarginContainer/VBox/TerrainList"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="Details" type="VBoxContainer" parent="HUD/ShopUI/Panel/MarginContainer/VBox/TerrainList/LargePlot"]
+size_flags_horizontal = 3
+
+[node name="Name" type="Label" parent="HUD/ShopUI/Panel/MarginContainer/VBox/TerrainList/LargePlot/Details"]
+theme_override_font_sizes/font_size = 22
+text = "Dune luxuriante"
+
+[node name="Description" type="Label" parent="HUD/ShopUI/Panel/MarginContainer/VBox/TerrainList/LargePlot/Details"]
+theme_override_font_sizes/font_size = 16
+modulate = Color(1, 1, 1, 0.86)
+text = "Étendard premium avec irrigation naturelle."
+
+[node name="PriceLabel" type="Label" parent="HUD/ShopUI/Panel/MarginContainer/VBox/TerrainList/LargePlot"]
+theme_override_font_sizes/font_size = 20
+text = "600 cactus"
+
+[node name="BuyButton" type="Button" parent="HUD/ShopUI/Panel/MarginContainer/VBox/TerrainList/LargePlot"]
+text = "Acheter"
+
+[node name="Hint" type="Label" parent="HUD/ShopUI/Panel/MarginContainer/VBox"]
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = "(Fonctionnalité d'achat à venir)"
+
+[node name="CloseButton" type="Button" parent="HUD/ShopUI/Panel/MarginContainer/VBox"]
+unique_name_in_owner = true
+size_flags_horizontal = 4
+text = "Fermer"
+
 [node name="Player" parent="." groups=["Player"] instance=ExtResource("3_sugp2")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 1.1925354, 11.981886)
+
+[node name="Shop" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -8)
+script = ExtResource("4_0mxmm")
+shop_ui_path = NodePath("../HUD/ShopUI")
+prompt_label_path = NodePath("../HUD/ShopPrompt")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Shop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+shape = SubResource("CylinderShape3D_shop")
+
+[node name="Stall" type="MeshInstance3D" parent="Shop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+mesh = SubResource("BoxMesh_shop")
+
+[node name="Sign" type="Label3D" parent="Shop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
+text = "Échoppe"
+billboard = 1
