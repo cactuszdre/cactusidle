@@ -17,6 +17,8 @@ var idle_time: float = 0.0
 const WALK_SPEED: float = 6.0
 const SWING_AMPLITUDE: float = 0.7
 
+var override_right_arm: bool = false
+
 func _process(delta: float) -> void:
 	# Détecter le mouvement
 	var velocity_2d := Vector2(player.velocity.x, player.velocity.z)
@@ -34,8 +36,9 @@ func _process(delta: float) -> void:
 		shoulder_left.rotation.x = arm_swing
 		elbow_left.rotation.x = max(0, -arm_swing * 0.5)
 		
-		shoulder_right.rotation.x = -arm_swing
-		elbow_right.rotation.x = max(0, arm_swing * 0.5)
+		if not override_right_arm:
+			shoulder_right.rotation.x = -arm_swing
+			elbow_right.rotation.x = max(0, arm_swing * 0.5)
 		
 		# Balancement des jambes avec articulation
 		var leg_swing := sin(walk_time) * 0.6
@@ -58,8 +61,9 @@ func _process(delta: float) -> void:
 		shoulder_left.rotation.x = lerp(shoulder_left.rotation.x, -1.5, delta * 10.0)
 		elbow_left.rotation.x = lerp(elbow_left.rotation.x, 0.3, delta * 10.0)
 		
-		shoulder_right.rotation.x = lerp(shoulder_right.rotation.x, -1.5, delta * 10.0)
-		elbow_right.rotation.x = lerp(elbow_right.rotation.x, 0.3, delta * 10.0)
+		if not override_right_arm:
+			shoulder_right.rotation.x = lerp(shoulder_right.rotation.x, -1.5, delta * 10.0)
+			elbow_right.rotation.x = lerp(elbow_right.rotation.x, 0.3, delta * 10.0)
 		
 		# Jambes ensemble
 		hip_left.rotation.x = lerp(hip_left.rotation.x, 0.3, delta * 10.0)
@@ -82,8 +86,9 @@ func _process(delta: float) -> void:
 		shoulder_left.rotation.x = lerp(shoulder_left.rotation.x, 0.2, delta * 5.0)
 		elbow_left.rotation.x = lerp(elbow_left.rotation.x, 0.0, delta * 5.0)
 		
-		shoulder_right.rotation.x = lerp(shoulder_right.rotation.x, 0.2, delta * 5.0)
-		elbow_right.rotation.x = lerp(elbow_right.rotation.x, 0.0, delta * 5.0)
+		if not override_right_arm:
+			shoulder_right.rotation.x = lerp(shoulder_right.rotation.x, 0.2, delta * 5.0)
+			elbow_right.rotation.x = lerp(elbow_right.rotation.x, 0.0, delta * 5.0)
 		
 		hip_left.rotation.x = lerp(hip_left.rotation.x, 0.0, delta * 5.0)
 		knee_left.rotation.x = lerp(knee_left.rotation.x, 0.0, delta * 5.0)

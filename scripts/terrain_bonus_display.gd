@@ -17,8 +17,8 @@ var _current_field_name: String = ""
 @onready var field_prompt = get_node_or_null("../HUD/FieldPrompt")
 
 const FIELD_CONFIG = {
-	"SmallPlot": { "duration": 5.0, "reward": 50 },
-	"LargePlot": { "duration": 8.0, "reward": 250 }
+	"SmallPlot": { "duration": 10.0, "reward": 50 },
+	"LargePlot": { "duration": 20.0, "reward": 250 }
 }
 
 func _ready() -> void:

@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://cactus_processor"]
+
+[ext_resource type="Script" path="res://scripts/machines/processor.gd" id="1_script"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1"]
+top_radius = 0.8
+bottom_radius = 0.8
+height = 2.0
+
+[node name="Processor" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CylinderMesh_1")

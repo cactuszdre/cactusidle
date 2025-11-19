@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://auto_harvester"]
+
+[ext_resource type="Script" path="res://scripts/machines/harvester.gd" id="1_script"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_1"]
+size = Vector3(1.5, 1.5, 1.5)
+
+[node name="Harvester" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.75, 0)
+mesh = SubResource("PrismMesh_1")

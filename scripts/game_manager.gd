@@ -6,7 +6,7 @@ var base_cactus_per_second: float = 100.0
 var purchased_bonuses: Dictionary = {}
 var has_farmer: bool = false
 
-const AURA_BONUS_MULTIPLIER := 1
+const AURA_BONUS_MULTIPLIER := 10
 
 # Références
 @onready var cactus_label = get_node("../HUD/CactusCounter")
@@ -53,6 +53,9 @@ func unlock_terrain(option_name: String) -> void:
 	if option_name == "Farmer":
 		has_farmer = true
 		print("👨‍🌾 Fermier débloqué !")
+	elif option_name == "FactoryLicense":
+		print("🏭 Usine débloquée ! Appuyez sur B pour construire.")
+		# Unlock logic is handled by checking purchased_bonuses in BuilderController
 	elif terrain_display:
 		terrain_display.unlock_field(option_name)
 	

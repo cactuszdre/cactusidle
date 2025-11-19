@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://cfivm8uwuhy4g"]
+[gd_scene load_steps=60 format=3 uid="uid://cfivm8uwuhy4g"]
 
 [ext_resource type="PackedScene" uid="uid://dvr746oenhjrb" path="res://scenes/cactus_giant.tscn" id="1_0wfyh"]
 [ext_resource type="Script" uid="uid://c6todyf7mjm1x" path="res://scripts/game_manager.gd" id="2_sugp2"]
@@ -6,12 +6,14 @@
 [ext_resource type="Script" uid="uid://c8lxt6kqmkuq" path="res://scripts/shop.gd" id="4_0mxmm"]
 [ext_resource type="Script" uid="uid://defce2b0ggbvt" path="res://scripts/shop_ui.gd" id="5_7p0a5"]
 [ext_resource type="Shader" uid="uid://dc8oc4s8vni73" path="res://shaders/shop_ui_background.gdshader" id="6_bg_shader"]
-[ext_resource type="Shader" uid="uid://qvnrqiinkpmc" path="res://shaders/shop_item_card.gdshader" id="7_card_shader"]
+[ext_resource type="Script" uid="uid://doeasy1ypietd" path="res://scripts/factory_manager.gd" id="7_factory"]
 [ext_resource type="Script" uid="uid://3j75a7yuwn1y" path="res://scripts/terrain_bonus_display.gd" id="8_bonus_display"]
-[ext_resource type="Script" path="res://scripts/farmer_ai.gd" id="9_farmer_ai"]
-[ext_resource type="Shader" path="res://shaders/sand.gdshader" id="9_sand_shader"]
-[ext_resource type="Shader" path="res://shaders/realistic_cactus.gdshader" id="10_cactus_shader"]
-[ext_resource type="Script" path="res://scripts/pause_menu.gd" id="11_pause_menu"]
+[ext_resource type="Script" uid="uid://c4l8hre5fdfke" path="res://scripts/builder_controller.gd" id="8_builder"]
+[ext_resource type="Script" uid="uid://v7hkuuldfiij" path="res://scripts/ui/factory_ui.gd" id="9_factory_ui"]
+[ext_resource type="Script" uid="uid://cy74nnh446w5d" path="res://scripts/farmer_ai.gd" id="9_farmer_ai"]
+[ext_resource type="Shader" uid="uid://yh8y1pql6174" path="res://shaders/sand.gdshader" id="9_sand_shader"]
+[ext_resource type="Shader" uid="uid://cai0g2in4hvtq" path="res://shaders/realistic_cactus.gdshader" id="10_cactus_shader"]
+[ext_resource type="Script" uid="uid://djbkkrx3q3g3v" path="res://scripts/pause_menu.gd" id="11_pause_menu"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_jyhfs"]
 sky_top_color = Color(0.2, 0.45, 0.85, 1)
@@ -30,6 +32,7 @@ sky = SubResource("Sky_tbgi4")
 ambient_light_source = 3
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sand"]
+render_priority = 0
 shader = ExtResource("9_sand_shader")
 shader_parameter/sand_color = Color(0.88, 0.75, 0.59, 1)
 shader_parameter/grain_amount = 0.15
@@ -52,12 +55,17 @@ shader_parameter/border_width = 0.01
 shader_parameter/glow_intensity = 0.8
 shader_parameter/pattern_scale = 12.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_card_1"]
-shader = ExtResource("7_card_shader")
-shader_parameter/card_color = Color(0.18, 0.16, 0.14, 0.92)
-shader_parameter/highlight_color = Color(0.75, 0.55, 0.25, 1)
-shader_parameter/hover_strength = 0.0
-shader_parameter/corner_radius = 0.025
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shop_item"]
+bg_color = Color(0.15, 0.12, 0.1, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.4, 0.3, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_normal"]
 bg_color = Color(0.55, 0.4, 0.2, 1)
@@ -80,12 +88,30 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_card_2"]
-shader = ExtResource("7_card_shader")
-shader_parameter/card_color = Color(0.18, 0.16, 0.14, 0.92)
-shader_parameter/highlight_color = Color(0.75, 0.55, 0.25, 1)
-shader_parameter/hover_strength = 0.0
-shader_parameter/corner_radius = 0.025
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_farmer_body"]
+albedo_color = Color(0.2, 0.4, 0.8, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_farmer_body"]
+material = SubResource("StandardMaterial3D_farmer_body")
+radius = 0.3
+height = 1.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_farmer_skin"]
+albedo_color = Color(0.96, 0.8, 0.6, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_farmer_head"]
+material = SubResource("StandardMaterial3D_farmer_skin")
+radius = 0.25
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_farmer_hat"]
+albedo_color = Color(0.8, 0.7, 0.4, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_farmer_hat"]
+material = SubResource("StandardMaterial3D_farmer_hat")
+top_radius = 0.0
+bottom_radius = 0.4
+height = 0.3
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bonus_plot"]
 albedo_color = Color(0.36, 0.28, 0.16, 1)
@@ -98,9 +124,26 @@ emission_energy_multiplier = 0.25
 [sub_resource type="PlaneMesh" id="PlaneMesh_bonus_plot"]
 size = Vector2(6, 6)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wood_border"]
+albedo_color = Color(0.32, 0.22, 0.13, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_border_side"]
+size = Vector3(6.2, 0.4, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mound"]
+albedo_color = Color(0.25, 0.18, 0.12, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_mound"]
+top_radius = 0.4
+bottom_radius = 0.6
+height = 0.3
+radial_segments = 12
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cactus"]
+render_priority = 0
 shader = ExtResource("10_cactus_shader")
-shader_parameter/cactus_color = Color(0.20, 0.50, 0.28, 1)
+shader_parameter/cactus_color = Color(0.2, 0.5, 0.28, 1)
 shader_parameter/thorn_color = Color(0.8, 0.8, 0.6, 1)
 shader_parameter/roughness = 0.35
 shader_parameter/rim_power = 3.0
@@ -113,24 +156,12 @@ bottom_radius = 0.32
 height = 1.8
 radial_segments = 12
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_field_sign_post"]
-albedo_color = Color(0.352941, 0.243137, 0.156863, 1)
-metallic = 0.04
-roughness = 0.65
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_slot_click"]
+height = 1.0
+radius = 0.6
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_field_sign_post"]
-top_radius = 0.06
-bottom_radius = 0.08
-height = 1.4
-radial_segments = 12
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_field_sign_board"]
-albedo_color = Color(0.870588, 0.756863, 0.513726, 1)
-metallic = 0.05
-roughness = 0.45
-
-[sub_resource type="BoxMesh" id="BoxMesh_field_sign_board"]
-size = Vector3(1.8, 0.45, 0.08)
+[sub_resource type="BoxShape3D" id="BoxShape3D_field_area"]
+size = Vector3(7, 3, 7)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_shop"]
 height = 2.5
@@ -200,44 +231,16 @@ rings = 12
 [sub_resource type="BoxShape3D" id="BoxShape3D_shop_building"]
 size = Vector3(4, 3, 4)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shop_item"]
-bg_color = Color(0.15, 0.12, 0.1, 0.9)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.5, 0.4, 0.3, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_field_sign_post"]
+albedo_color = Color(0.352941, 0.243137, 0.156863, 1)
+metallic = 0.04
+roughness = 0.65
 
-corner_radius_bottom_left = 8
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_farmer_body"]
-albedo_color = Color(0.2, 0.4, 0.8, 1)
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_farmer_body"]
-material = SubResource("StandardMaterial3D_farmer_body")
-radius = 0.3
-height = 1.5
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_farmer_skin"]
-albedo_color = Color(0.96, 0.8, 0.6, 1)
-
-[sub_resource type="SphereMesh" id="SphereMesh_farmer_head"]
-material = SubResource("StandardMaterial3D_farmer_skin")
-radius = 0.25
-height = 0.5
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_farmer_hat"]
-albedo_color = Color(0.8, 0.7, 0.4, 1)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_farmer_hat"]
-material = SubResource("StandardMaterial3D_farmer_hat")
-top_radius = 0.0
-bottom_radius = 0.4
-height = 0.3
+[sub_resource type="CylinderMesh" id="CylinderMesh_field_sign_post"]
+top_radius = 0.06
+bottom_radius = 0.08
+height = 1.4
+radial_segments = 12
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shop_sign_board"]
 albedo_color = Color(0.419608, 0.290196, 0.176471, 1)
@@ -246,30 +249,6 @@ roughness = 0.55
 emission_enabled = true
 emission = Color(0.12549, 0.0862745, 0.0431373, 1)
 emission_energy_multiplier = 0.1
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wood_border"]
-albedo_color = Color(0.32, 0.22, 0.13, 1)
-roughness = 0.8
-
-[sub_resource type="BoxMesh" id="BoxMesh_border_side"]
-size = Vector3(6.2, 0.4, 0.2)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mound"]
-albedo_color = Color(0.25, 0.18, 0.12, 1)
-roughness = 1.0
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_mound"]
-top_radius = 0.4
-bottom_radius = 0.6
-height = 0.3
-radial_segments = 12
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_slot_click"]
-height = 1.0
-radius = 0.6
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_field_area"]
-size = Vector3(7, 3, 7)
 
 [sub_resource type="BoxMesh" id="BoxMesh_shop_sign_board"]
 size = Vector3(3.2, 0.8, 0.12)
@@ -314,13 +293,92 @@ anchor_left = 0.5
 anchor_top = 0.85
 anchor_right = 0.5
 anchor_bottom = 0.85
-offset_left = -200.0
-offset_top = -20.0
-offset_right = 200.0
-offset_bottom = 20.0
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_font_sizes/font_size = 24
-text = "Approchez-vous de l'échoppe"
+text = "Appuyez sur E pour ouvrir"
+
+[node name="Crosshair" type="Label" parent="HUD"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 24
+text = "+"
 horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BuildModeHint" type="Label" parent="HUD"]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -250.0
+offset_top = -60.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+text = "🏗️ Mode Construction [B]"
+horizontal_alignment = 2
+
+[node name="FactoryUI" type="Control" parent="HUD"]
+visible = false
+layout_mode = 3
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -100.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("9_factory_ui")
+
+[node name="Panel" type="Panel" parent="HUD/FactoryUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/FactoryUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 10
+
+[node name="MachineList" type="HBoxContainer" parent="HUD/FactoryUI/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
 
 [node name="FieldPrompt" type="Label" parent="HUD"]
 visible = false
@@ -342,11 +400,10 @@ theme_override_font_sizes/font_size = 28
 text = "Clic Gauche: Planter"
 horizontal_alignment = 1
 
-horizontal_alignment = 1
-
 [node name="PauseMenu" type="Control" parent="HUD"]
 process_mode = 3
 visible = false
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -493,10 +550,12 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 18
+current_tab = 0
 
 [node name="Terrains" type="ScrollContainer" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer"]
 layout_mode = 2
 horizontal_scroll_mode = 0
+metadata/_tab_index = 0
 
 [node name="TerrainList" type="VBoxContainer" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Terrains"]
 unique_name_in_owner = true
@@ -618,6 +677,7 @@ text = "ACHETER"
 visible = false
 layout_mode = 2
 horizontal_scroll_mode = 0
+metadata/_tab_index = 1
 
 [node name="EmployeeList" type="VBoxContainer" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Employés"]
 unique_name_in_owner = true
@@ -675,6 +735,60 @@ text = "1000 🌵"
 horizontal_alignment = 2
 
 [node name="BuyButton" type="Button" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Employés/EmployeeList/Farmer/Content/HBox/PriceSection"]
+custom_minimum_size = Vector2(100, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "ACHETER"
+
+[node name="FactoryLicense" type="PanelContainer" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Employés/EmployeeList"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_shop_item")
+
+[node name="Content" type="MarginContainer" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Employés/EmployeeList/FactoryLicense"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="HBox" type="HBoxContainer" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Employés/EmployeeList/FactoryLicense/Content"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Icon" type="Label" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Employés/EmployeeList/FactoryLicense/Content/HBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "🏭"
+
+[node name="Info" type="VBoxContainer" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Employés/EmployeeList/FactoryLicense/Content/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="Name" type="Label" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Employés/EmployeeList/FactoryLicense/Content/HBox/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_font_sizes/font_size = 20
+text = "Permis de Construire"
+
+[node name="Desc" type="Label" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Employés/EmployeeList/FactoryLicense/Content/HBox/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 14
+text = "Débloque le mode construction (Touche B) pour automatiser votre empire."
+
+[node name="PriceSection" type="VBoxContainer" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Employés/EmployeeList/FactoryLicense/Content/HBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="PriceLabel" type="Label" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Employés/EmployeeList/FactoryLicense/Content/HBox/PriceSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+text = "5000 🌵"
+horizontal_alignment = 2
+
+[node name="BuyButton" type="Button" parent="HUD/ShopUI/MarginContainer/VBox/TabContainer/Employés/EmployeeList/FactoryLicense/Content/HBox/PriceSection"]
 custom_minimum_size = Vector2(100, 36)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
@@ -957,7 +1071,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("CylinderShape3D_slot_click")
 
 [node name="Slot5" type="Node3D" parent="TerrainBonusDisplay/Fields/LargePlot/Slots"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Mound" type="MeshInstance3D" parent="TerrainBonusDisplay/Fields/LargePlot/Slots/Slot5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
@@ -1057,7 +1170,12 @@ shape = SubResource("CylinderShape3D_slot_click")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 shape = SubResource("BoxShape3D_field_area")
 
+[node name="FactoryManager" type="Node" parent="."]
+script = ExtResource("7_factory")
 
+[node name="BuilderController" type="Node" parent="."]
+script = ExtResource("8_builder")
+factory_manager_path = NodePath("../FactoryManager")
 
 [node name="Player" parent="." groups=["Player"] instance=ExtResource("3_sugp2")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 1.1925354, 11.981886)

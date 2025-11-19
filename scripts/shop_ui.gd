@@ -14,7 +14,8 @@ var purchased_options: Dictionary = {}
 const TERRAIN_PRICES: Dictionary = {
 	"SmallPlot": 150,
 	"LargePlot": 600,
-	"Farmer": 1000
+	"Farmer": 1000,
+	"FactoryLicense": 5000
 }
 
 const TERRAIN_BONUS_DATA: Dictionary = {
@@ -32,6 +33,11 @@ const TERRAIN_BONUS_DATA: Dictionary = {
 		"label": "Fermier Cactus",
 		"description": "Un expert qui plante et récolte automatiquement.",
 		"type": "employee"
+	},
+	"FactoryLicense": {
+		"label": "Permis de Construire",
+		"description": "Débloque le mode construction (Touche B) pour automatiser votre empire.",
+		"type": "special"
 	}
 }
 
