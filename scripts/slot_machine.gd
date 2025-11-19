@@ -6,7 +6,6 @@ extends Node3D
 @onready var reel1 = $Body/Screen/Reel1
 @onready var reel2 = $Body/Screen/Reel2
 @onready var reel3 = $Body/Screen/Reel3
-@onready var label = $Body/Label3D
 @onready var particles = $Body/WinParticles
 @onready var lever = $Body/Lever
 @onready var chair = $Chair
@@ -26,6 +25,7 @@ var original_camera_rotation: Vector3
 var original_spring_length: float
 var can_sit: bool = false
 var sit_prompt: Label3D
+var ui_label: Label  # 2D UI label for instructions
 
 func _ready():
 	sit_area.body_entered.connect(_on_sit_area_entered)
@@ -40,6 +40,25 @@ func _ready():
 	sit_prompt.visible = false
 	chair.add_child(sit_prompt)
 	sit_prompt.position = Vector3(0, 1.5, 0)
+	
+	# Create 2D UI label
+	var canvas_layer = CanvasLayer.new()
+	add_child(canvas_layer)
+	
+	ui_label = Label.new()
+	ui_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ui_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	ui_label.anchor_left = 0.5
+	ui_label.anchor_right = 0.5
+	ui_label.anchor_top = 1.0
+	ui_label.anchor_bottom = 1.0
+	ui_label.offset_left = -300
+	ui_label.offset_right = 300
+	ui_label.offset_top = -80
+	ui_label.offset_bottom = -20
+	ui_label.add_theme_font_size_override("font_size", 24)
+	ui_label.visible = false
+	canvas_layer.add_child(ui_label)
 	
 	_reset()
 
@@ -83,16 +102,16 @@ func _check_lever_raycast():
 	
 	if result and result.collider == $Body/Lever/LeverCollider:
 		# Looking at lever
-		label.text = "[E] Tirer le levier\n" + str(spin_cost) + " 🌵"
-		label.modulate = Color.YELLOW
+		ui_label.text = "[E] Tirer le levier - " + str(spin_cost) + " 🌵"
+		ui_label.modulate = Color.YELLOW
 		
 		if Input.is_key_pressed(KEY_E):
 			_pull_lever()
 	else:
 		# Not looking at lever
 		if not is_spinning:
-			label.text = "Regardez le levier\n[F] Se lever"
-			label.modulate = Color.WHITE
+			ui_label.text = "Regardez le levier - [F] Se lever"
+			ui_label.modulate = Color.WHITE
 
 func _on_sit_area_entered(body):
 	if body.is_in_group("Player") and not is_player_seated:
@@ -161,8 +180,12 @@ func _sit_player():
 			if player_model:
 				player_model.visible = false
 		
+		# Show UI label
+		ui_label.visible = true
+		ui_label.text = "Regardez le levier - [F] Se lever"
+		ui_label.modulate = Color.WHITE
+		
 		print("🪑 Assis ! Regardez le levier et appuyez sur E pour jouer. [F] pour se lever.")
-		label.text = "Regardez le levier\n[F] Se lever"
 
 func _unsit_player():
 	if not is_player_seated or not player_ref:
@@ -215,6 +238,10 @@ func _unsit_player():
 	
 	is_player_seated = false
 	player_ref = null
+	
+	# Hide UI label
+	ui_label.visible = false
+	
 	print("🚶 Debout !")
 	_reset()
 
@@ -226,16 +253,16 @@ func _pull_lever():
 		game_manager.add_cactus(-spin_cost)
 		_spin()
 	else:
-		label.text = "Pas assez de cactus !"
-		label.modulate = Color.RED
+		ui_label.text = "Pas assez de cactus !"
+		ui_label.modulate = Color.RED
 		await get_tree().create_timer(1.0).timeout
-		label.text = "Regardez le levier\n[F] Se lever"
-		label.modulate = Color.WHITE
+		ui_label.text = "Regardez le levier - [F] Se lever"
+		ui_label.modulate = Color.WHITE
 
 func _spin():
 	is_spinning = true
-	label.text = "..."
-	label.modulate = Color.WHITE
+	ui_label.text = "..."
+	ui_label.modulate = Color.WHITE
 	
 	# Animate lever - pull it toward the machine
 	var tween = create_tween()
@@ -276,16 +303,16 @@ func _spin():
 	else:
 		# Loss
 		_set_screen_color(Color.RED)
-		label.text = "PERDU..."
+		ui_label.text = "PERDU..."
 		await get_tree().create_timer(1.0).timeout
 		is_spinning = false
 		_reset()
-		label.text = "Regardez le levier\n[F] Se lever"
-		label.modulate = Color.WHITE
+		ui_label.text = "Regardez le levier - [F] Se lever"
+		ui_label.modulate = Color.WHITE
 
 func _win(amount: int, color: Color, text: String):
 	_set_screen_color(color)
-	label.text = text + "\n+" + str(amount)
+	ui_label.text = text + " +" + str(amount) + " 🌵"
 	if game_manager:
 		game_manager.add_cactus(amount)
 	
@@ -294,8 +321,8 @@ func _win(amount: int, color: Color, text: String):
 		
 	await get_tree().create_timer(2.0).timeout
 	is_spinning = false
-	label.text = "Regardez le levier\n[F] Se lever"
-	label.modulate = Color.WHITE
+	ui_label.text = "Regardez le levier - [F] Se lever"
+	ui_label.modulate = Color.WHITE
 
 func _reset():
 	is_spinning = false
@@ -303,8 +330,6 @@ func _reset():
 	reel1.text = "🎰"
 	reel2.text = "🎰"
 	reel3.text = "🎰"
-	label.text = "JOUER\n" + str(spin_cost) + " 🌵"
-	label.modulate = Color.WHITE
 
 func _set_screen_color(col: Color):
 	var mat = screen_mesh.get_active_material(0)
