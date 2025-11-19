@@ -14,6 +14,8 @@
 [ext_resource type="Shader" uid="uid://yh8y1pql6174" path="res://shaders/sand.gdshader" id="9_sand_shader"]
 [ext_resource type="Shader" uid="uid://cai0g2in4hvtq" path="res://shaders/realistic_cactus.gdshader" id="10_cactus_shader"]
 [ext_resource type="Script" uid="uid://djbkkrx3q3g3v" path="res://scripts/pause_menu.gd" id="11_pause_menu"]
+[ext_resource type="PackedScene" uid="uid://dunes_env" path="res://scenes/dunes.tscn" id="12_dunes"]
+[ext_resource type="PackedScene" uid="uid://casino_building" path="res://scenes/casino.tscn" id="13_casino"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_jyhfs"]
 sky_top_color = Color(0.2, 0.45, 0.85, 1)
@@ -272,6 +274,11 @@ mesh = SubResource("PlaneMesh_tipki")
 shape = SubResource("BoxShape3D_sugp2")
 
 [node name="CactusGiant" parent="." instance=ExtResource("1_0wfyh")]
+
+[node name="Dunes" parent="." instance=ExtResource("12_dunes")]
+
+[node name="Casino" parent="." instance=ExtResource("13_casino")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 60)
 
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource("2_sugp2")

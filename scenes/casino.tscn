@@ -1,0 +1,197 @@
+[gd_scene load_steps=15 format=3 uid="uid://casino_building"]
+
+[ext_resource type="Script" path="res://scripts/casino.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://slot_machine" path="res://scenes/slot_machine.tscn" id="2_slots"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.3, 0.1, 0.1, 1)
+metallic = 0.2
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall_out"]
+albedo_color = Color(0.15, 0.1, 0.2, 1)
+metallic = 0.5
+roughness = 0.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall_in"]
+albedo_color = Color(0.25, 0.2, 0.3, 1)
+metallic = 0.1
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gold"]
+albedo_color = Color(1, 0.8, 0.2, 1)
+metallic = 1.0
+roughness = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_neon"]
+albedo_color = Color(1, 0.2, 0.6, 1)
+emission_enabled = true
+emission = Color(1, 0.2, 0.6, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_neon_sign"]
+material = SubResource("StandardMaterial3D_neon")
+size = Vector3(12, 2, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_guard"]
+albedo_color = Color(0.1, 0.1, 0.1, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_guard"]
+material = SubResource("StandardMaterial3D_guard")
+radius = 0.4
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glasses"]
+albedo_color = Color(0, 0, 0, 1)
+metallic = 0.8
+roughness = 0.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_glasses"]
+material = SubResource("StandardMaterial3D_glasses")
+size = Vector3(0.5, 0.15, 0.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_entrance"]
+size = Vector3(6, 4, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_door"]
+material = SubResource("StandardMaterial3D_gold")
+size = Vector3(4, 5, 0.5)
+
+[node name="Casino" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Architecture" type="CSGCombiner3D" parent="."]
+use_collision = true
+
+[node name="OuterShell" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+size = Vector3(30, 20, 40)
+material = SubResource("StandardMaterial3D_wall_out")
+
+[node name="InnerHollow" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
+operation = 2
+size = Vector3(28, 18, 38)
+material = SubResource("StandardMaterial3D_wall_in")
+
+[node name="Doorway" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 19.5)
+operation = 2
+size = Vector3(6, 6, 4)
+material = SubResource("StandardMaterial3D_wall_in")
+
+[node name="Floor" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+size = Vector3(28, 1, 38)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Decor" type="Node3D" parent="."]
+
+[node name="NeonSign" type="MeshInstance3D" parent="Decor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16, 20.5)
+mesh = SubResource("BoxMesh_neon_sign")
+
+[node name="Label3D" type="Label3D" parent="Decor/NeonSign"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.3)
+text = "ROYAL CACTUS CASINO"
+font_size = 96
+outline_size = 12
+
+[node name="Pillars" type="Node3D" parent="Decor"]
+
+[node name="Pillar1" type="CSGCylinder3D" parent="Decor/Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 9, 10)
+radius = 1.0
+height = 18.0
+material = SubResource("StandardMaterial3D_gold")
+
+[node name="Pillar2" type="CSGCylinder3D" parent="Decor/Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 9, 10)
+radius = 1.0
+height = 18.0
+material = SubResource("StandardMaterial3D_gold")
+
+[node name="Pillar3" type="CSGCylinder3D" parent="Decor/Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 9, -10)
+radius = 1.0
+height = 18.0
+material = SubResource("StandardMaterial3D_gold")
+
+[node name="Pillar4" type="CSGCylinder3D" parent="Decor/Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 9, -10)
+radius = 1.0
+height = 18.0
+material = SubResource("StandardMaterial3D_gold")
+
+[node name="SlotMachines" type="Node3D" parent="."]
+
+[node name="SlotMachine1" parent="SlotMachines" instance=ExtResource("2_slots")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -8, 1, 5)
+
+[node name="SlotMachine2" parent="SlotMachines" instance=ExtResource("2_slots")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -5, 1, 5)
+
+[node name="SlotMachine3" parent="SlotMachines" instance=ExtResource("2_slots")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -2, 1, 5)
+
+[node name="SlotMachine4" parent="SlotMachines" instance=ExtResource("2_slots")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2, 1, 5)
+
+[node name="SlotMachine5" parent="SlotMachines" instance=ExtResource("2_slots")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 5, 1, 5)
+
+[node name="SlotMachine6" parent="SlotMachines" instance=ExtResource("2_slots")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 8, 1, 5)
+
+[node name="SlotMachine7" parent="SlotMachines" instance=ExtResource("2_slots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, -5)
+
+[node name="SlotMachine8" parent="SlotMachines" instance=ExtResource("2_slots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -5)
+
+[node name="SlotMachine9" parent="SlotMachines" instance=ExtResource("2_slots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, -5)
+
+[node name="SlotMachine10" parent="SlotMachines" instance=ExtResource("2_slots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -5)
+
+[node name="SlotMachine11" parent="SlotMachines" instance=ExtResource("2_slots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, -5)
+
+[node name="SlotMachine12" parent="SlotMachines" instance=ExtResource("2_slots")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, -5)
+
+[node name="Bodyguard" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 22)
+
+[node name="Body" type="MeshInstance3D" parent="Bodyguard"]
+mesh = SubResource("CapsuleMesh_guard")
+
+[node name="Glasses" type="MeshInstance3D" parent="Bodyguard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0.3)
+mesh = SubResource("BoxMesh_glasses")
+
+[node name="EntranceArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 24)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EntranceArea"]
+shape = SubResource("BoxShape3D_entrance")
+
+[node name="PromptLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 22)
+visible = false
+billboard = 1
+text = "Garde: \"Halte !\""
+font_size = 48
+outline_size = 6
+
+[node name="DoorAnim" type="Node" parent="."]
+
+[node name="BigDoor" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 20)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="BigDoor"]
+mesh = SubResource("BoxMesh_door")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BigDoor"]
+shape = SubResource("BoxShape3D_entrance")

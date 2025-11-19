@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://dunes_env"]
+
+[ext_resource type="Shader" path="res://shaders/dune_mesh.gdshader" id="1_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dunes"]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/sand_color = Color(0.88, 0.75, 0.59, 1)
+shader_parameter/dune_height = 25.0
+shader_parameter/dune_scale = 0.02
+shader_parameter/noise_scale = 100.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_dune_strip"]
+size = Vector2(600, 200)
+subdivide_width = 50
+subdivide_depth = 20
+
+[node name="Dunes" type="Node3D"]
+
+[node name="North" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, -350)
+material_override = SubResource("ShaderMaterial_dunes")
+mesh = SubResource("PlaneMesh_dune_strip")
+
+[node name="South" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 350)
+material_override = SubResource("ShaderMaterial_dunes")
+mesh = SubResource("PlaneMesh_dune_strip")
+
+[node name="East" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 350, -5, 0)
+material_override = SubResource("ShaderMaterial_dunes")
+mesh = SubResource("PlaneMesh_dune_strip")
+
+[node name="West" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -350, -5, 0)
+material_override = SubResource("ShaderMaterial_dunes")
+mesh = SubResource("PlaneMesh_dune_strip")
