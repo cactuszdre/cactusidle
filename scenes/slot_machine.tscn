@@ -1,79 +1,155 @@
-[gd_scene load_steps=11 format=3 uid="uid://slot_machine"]
+[gd_scene load_steps=13 format=3 uid="uid://slot_machine"]
 
 [ext_resource type="Script" path="res://scripts/slot_machine.gd" id="1_script"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
-albedo_color = Color(0.15, 0.1, 0.2, 1)
-metallic = 0.8
-roughness = 0.4
+albedo_color = Color(0.8, 0.1, 0.1, 1)
+metallic = 0.7
+roughness = 0.3
 
 [sub_resource type="BoxMesh" id="BoxMesh_body"]
 material = SubResource("StandardMaterial3D_body")
-size = Vector3(1, 2, 0.8)
+size = Vector3(2, 3, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_body"]
+size = Vector3(2, 3, 1.5)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_screen"]
-resource_local_to_scene = true
 albedo_color = Color(0.2, 0.2, 0.2, 1)
 emission_enabled = true
 emission = Color(0.2, 0.2, 0.2, 1)
+emission_energy_multiplier = 1.5
 
 [sub_resource type="BoxMesh" id="BoxMesh_screen"]
-resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_screen")
-size = Vector3(0.8, 0.6, 0.1)
+size = Vector3(1.5, 1.2, 0.1)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_interact"]
-size = Vector3(2, 2, 2)
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_win"]
-direction = Vector3(0, 1, 0)
-spread = 30.0
-initial_velocity_min = 3.0
-initial_velocity_max = 5.0
-scale_min = 0.1
-scale_max = 0.3
-color = Color(1, 0.843137, 0, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_coin"]
-albedo_color = Color(1, 0.843137, 0, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lever"]
+albedo_color = Color(1, 0.8, 0.2, 1)
 metallic = 1.0
 roughness = 0.2
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_coin"]
-material = SubResource("StandardMaterial3D_coin")
-top_radius = 0.1
-bottom_radius = 0.1
-height = 0.02
+[sub_resource type="CylinderMesh" id="CylinderMesh_lever"]
+material = SubResource("StandardMaterial3D_lever")
+top_radius = 0.08
+bottom_radius = 0.08
+height = 0.8
+
+[sub_resource type="SphereMesh" id="SphereMesh_lever_handle"]
+material = SubResource("StandardMaterial3D_lever")
+radius = 0.15
+height = 0.3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lever"]
+size = Vector3(0.3, 1.0, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_chair"]
+albedo_color = Color(0.2, 0.1, 0.05, 1)
+metallic = 0.1
+roughness = 0.8
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sit_area"]
+size = Vector3(1.5, 2, 1.5)
 
 [node name="SlotMachine" type="Node3D"]
 script = ExtResource("1_script")
 
-[node name="Body" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+[node name="Body" type="Node3D" parent="."]
+
+[node name="BodyCollision" type="StaticBody3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="BodyMesh" type="MeshInstance3D" parent="Body/BodyCollision"]
 mesh = SubResource("BoxMesh_body")
 
-[node name="Screen" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.906308, -0.422618, 0, 0.422618, 0.906308, 0, 1.4, 0.36)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body/BodyCollision"]
+shape = SubResource("BoxShape3D_body")
+
+[node name="Screen" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0.8)
 mesh = SubResource("BoxMesh_screen")
 
-[node name="Label3D" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0.45)
+[node name="Label3D" type="Label3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0.9)
+billboard = 1
 text = "JOUER
 50 🌵"
-font_size = 24
-outline_size = 4
+font_size = 32
+outline_size = 6
 
-[node name="InteractionArea" type="Area3D" parent="."]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1)
-shape = SubResource("BoxShape3D_interact")
-
-[node name="WinParticles" type="GPUParticles3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+[node name="WinParticles" type="GPUParticles3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0.8)
 emitting = false
-amount = 20
+amount = 50
+lifetime = 2.0
 one_shot = true
 explosiveness = 0.8
-process_material = SubResource("ParticleProcessMaterial_win")
-draw_pass_1 = SubResource("CylinderMesh_coin")
+randomness = 0.5
+
+[node name="Lever" type="Node3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 1.5, 0.5)
+
+[node name="LeverMesh" type="MeshInstance3D" parent="Body/Lever"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_lever")
+
+[node name="LeverHandle" type="MeshInstance3D" parent="Body/Lever"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("SphereMesh_lever_handle")
+
+[node name="LeverCollider" type="StaticBody3D" parent="Body/Lever"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body/Lever/LeverCollider"]
+shape = SubResource("BoxShape3D_lever")
+
+[node name="Chair" type="Node3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 1.5)
+
+[node name="Seat" type="CSGBox3D" parent="Chair"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+use_collision = true
+size = Vector3(0.8, 0.2, 0.8)
+material = SubResource("StandardMaterial3D_chair")
+
+[node name="Backrest" type="CSGBox3D" parent="Chair"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.3)
+use_collision = true
+size = Vector3(0.8, 1.0, 0.2)
+material = SubResource("StandardMaterial3D_chair")
+
+[node name="Leg1" type="CSGCylinder3D" parent="Chair"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0.25, -0.3)
+use_collision = true
+radius = 0.05
+height = 0.5
+material = SubResource("StandardMaterial3D_chair")
+
+[node name="Leg2" type="CSGCylinder3D" parent="Chair"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.25, -0.3)
+use_collision = true
+radius = 0.05
+height = 0.5
+material = SubResource("StandardMaterial3D_chair")
+
+[node name="Leg3" type="CSGCylinder3D" parent="Chair"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0.25, 0.3)
+use_collision = true
+radius = 0.05
+height = 0.5
+material = SubResource("StandardMaterial3D_chair")
+
+[node name="Leg4" type="CSGCylinder3D" parent="Chair"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.25, 0.3)
+use_collision = true
+radius = 0.05
+height = 0.5
+material = SubResource("StandardMaterial3D_chair")
+
+[node name="SitArea" type="Area3D" parent="Chair"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Chair/SitArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_sit_area")
+
+[node name="SitPosition" type="Marker3D" parent="Chair"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)

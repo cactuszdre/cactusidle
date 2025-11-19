@@ -126,40 +126,16 @@ material = SubResource("StandardMaterial3D_gold")
 [node name="SlotMachines" type="Node3D" parent="."]
 
 [node name="SlotMachine1" parent="SlotMachines" instance=ExtResource("2_slots")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -8, 1, 5)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -6, 1, 8)
 
 [node name="SlotMachine2" parent="SlotMachines" instance=ExtResource("2_slots")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -5, 1, 5)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 6, 1, 8)
 
 [node name="SlotMachine3" parent="SlotMachines" instance=ExtResource("2_slots")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -2, 1, 5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, -8)
 
 [node name="SlotMachine4" parent="SlotMachines" instance=ExtResource("2_slots")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2, 1, 5)
-
-[node name="SlotMachine5" parent="SlotMachines" instance=ExtResource("2_slots")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 5, 1, 5)
-
-[node name="SlotMachine6" parent="SlotMachines" instance=ExtResource("2_slots")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 8, 1, 5)
-
-[node name="SlotMachine7" parent="SlotMachines" instance=ExtResource("2_slots")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, -5)
-
-[node name="SlotMachine8" parent="SlotMachines" instance=ExtResource("2_slots")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -5)
-
-[node name="SlotMachine9" parent="SlotMachines" instance=ExtResource("2_slots")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, -5)
-
-[node name="SlotMachine10" parent="SlotMachines" instance=ExtResource("2_slots")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -5)
-
-[node name="SlotMachine11" parent="SlotMachines" instance=ExtResource("2_slots")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, -5)
-
-[node name="SlotMachine12" parent="SlotMachines" instance=ExtResource("2_slots")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1, -8)
 
 [node name="Bodyguard" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 22)

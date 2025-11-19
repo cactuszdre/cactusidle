@@ -1,4 +1,4 @@
-[gd_scene load_steps=60 format=3 uid="uid://cfivm8uwuhy4g"]
+[gd_scene load_steps=62 format=3 uid="uid://cfivm8uwuhy4g"]
 
 [ext_resource type="PackedScene" uid="uid://dvr746oenhjrb" path="res://scenes/cactus_giant.tscn" id="1_0wfyh"]
 [ext_resource type="Script" uid="uid://c6todyf7mjm1x" path="res://scripts/game_manager.gd" id="2_sugp2"]
@@ -14,8 +14,8 @@
 [ext_resource type="Shader" uid="uid://yh8y1pql6174" path="res://shaders/sand.gdshader" id="9_sand_shader"]
 [ext_resource type="Shader" uid="uid://cai0g2in4hvtq" path="res://shaders/realistic_cactus.gdshader" id="10_cactus_shader"]
 [ext_resource type="Script" uid="uid://djbkkrx3q3g3v" path="res://scripts/pause_menu.gd" id="11_pause_menu"]
-[ext_resource type="PackedScene" uid="uid://dunes_env" path="res://scenes/dunes.tscn" id="12_dunes"]
-[ext_resource type="PackedScene" uid="uid://casino_building" path="res://scenes/casino.tscn" id="13_casino"]
+[ext_resource type="PackedScene" path="res://scenes/dunes.tscn" id="12_dunes"]
+[ext_resource type="PackedScene" path="res://scenes/casino.tscn" id="13_casino"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_jyhfs"]
 sky_top_color = Color(0.2, 0.45, 0.85, 1)

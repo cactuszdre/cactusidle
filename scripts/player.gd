@@ -13,6 +13,7 @@ const SPRINT_SPEED := 12.0
 
 var yaw := 0.0
 var pitch := 0.0
+var can_move := true
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -28,6 +29,9 @@ func _input(event: InputEvent) -> void:
 		cam_pivot.rotation = Vector3(pitch, 0.0, 0.0)
 
 func _physics_process(delta: float) -> void:
+	if not can_move:
+		return
+		
 	var input_vector := _get_input_vector()
 	var desired_velocity := _compute_desired_velocity(input_vector)
 	var accel := ACCELERATION if is_on_floor() else ACCELERATION * AIR_CONTROL
