@@ -3,12 +3,18 @@ extends Node3D
 @export var spin_cost: int = 50
 @onready var game_manager = get_node_or_null("/root/Main/GameManager")
 @onready var screen_mesh = $Body/Screen
+@onready var reel1 = $Body/Screen/Reel1
+@onready var reel2 = $Body/Screen/Reel2
+@onready var reel3 = $Body/Screen/Reel3
 @onready var label = $Body/Label3D
 @onready var particles = $Body/WinParticles
 @onready var lever = $Body/Lever
 @onready var chair = $Chair
 @onready var sit_area = $Chair/SitArea
 @onready var sit_position = $Chair/SitPosition
+
+# Available emojis for the slot machine
+var emojis = ["🌵", "💎", "🍒", "🍋", "⭐", "🔔", "7️⃣", "🎰"]
 
 var is_spinning: bool = false
 var is_player_seated: bool = false
@@ -231,28 +237,49 @@ func _spin():
 	label.text = "..."
 	label.modulate = Color.WHITE
 	
-	# Animate lever
+	# Animate lever - pull it toward the machine
 	var tween = create_tween()
-	tween.tween_property(lever, "rotation_degrees:x", -45, 0.2)
-	tween.tween_property(lever, "rotation_degrees:x", 0, 0.3)
+	tween.tween_property(lever, "rotation_degrees:x", 90, 0.3).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(lever, "rotation_degrees:x", 0, 0.4).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	
-	# Visual spin effect
-	for i in range(10):
-		var random_color = Color(randf(), randf(), randf())
-		_set_screen_color(random_color)
+	# Spin animation - randomize emojis rapidly
+	for i in range(15):
+		reel1.text = emojis[randi() % emojis.size()]
+		reel2.text = emojis[randi() % emojis.size()]
+		reel3.text = emojis[randi() % emojis.size()]
 		await get_tree().create_timer(0.1).timeout
 	
-	# Result
-	var roll = randf()
-	if roll > 0.95: # Jackpot
-		_win(500, Color.GOLD, "JACKPOT !!")
-	elif roll > 0.6: # Win
+	# Final result
+	var final_reel1 = emojis[randi() % emojis.size()]
+	var final_reel2 = emojis[randi() % emojis.size()]
+	var final_reel3 = emojis[randi() % emojis.size()]
+	
+	reel1.text = final_reel1
+	await get_tree().create_timer(0.2).timeout
+	reel2.text = final_reel2
+	await get_tree().create_timer(0.2).timeout
+	reel3.text = final_reel3
+	await get_tree().create_timer(0.3).timeout
+	
+	# Check for win
+	if final_reel1 == final_reel2 and final_reel2 == final_reel3:
+		# All 3 match - JACKPOT!
+		var win_amount = 500
+		if final_reel1 == "💎":
+			win_amount = 1000  # Diamond jackpot
+		elif final_reel1 == "7️⃣":
+			win_amount = 777   # Lucky 7s
+		_win(win_amount, Color.GOLD, "JACKPOT !!")
+	elif final_reel1 == final_reel2 or final_reel2 == final_reel3 or final_reel1 == final_reel3:
+		# 2 match - small win
 		_win(100, Color.GREEN, "GAGNÉ !")
-	else: # Loss
+	else:
+		# Loss
 		_set_screen_color(Color.RED)
 		label.text = "PERDU..."
 		await get_tree().create_timer(1.0).timeout
 		is_spinning = false
+		_reset()
 		label.text = "Regardez le levier\n[F] Se lever"
 		label.modulate = Color.WHITE
 
@@ -272,7 +299,10 @@ func _win(amount: int, color: Color, text: String):
 
 func _reset():
 	is_spinning = false
-	_set_screen_color(Color(0.2, 0.2, 0.2))
+	_set_screen_color(Color(0.1, 0.1, 0.15))
+	reel1.text = "🎰"
+	reel2.text = "🎰"
+	reel3.text = "🎰"
 	label.text = "JOUER\n" + str(spin_cost) + " 🌵"
 	label.modulate = Color.WHITE
 
