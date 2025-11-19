@@ -11,8 +11,8 @@ const INPUT_REQUIRED: int = 10
 func tick(delta: float) -> void:
 	# Output logic
 	if output_inventory > 0:
-		var target_pos = get_output_pos()
-		var target_machine = factory_manager.get_machine_at(target_pos)
+		var target_pos = get_output_world_pos()
+		var target_machine = factory_manager.get_closest_machine(target_pos)
 		
 		if target_machine and target_machine.can_accept_item({ "type": "cactus_juice", "amount": 1 }, (rotation_dir + 2) % 4):
 			target_machine.inject_item({ "type": "cactus_juice", "amount": 1 })

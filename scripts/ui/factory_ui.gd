@@ -6,13 +6,13 @@ signal machine_selected(index: int)
 
 @onready var button_container = %MachineList
 
-var machine_names = ["Conveyor", "Harvester", "Processor", "Seller"]
+var machine_names = ["Convoyeur", "Récolteur", "Processeur", "Vendeur"]
 var machine_icons = ["➡️", "🤖", "🏭", "💰"]
 var machine_descriptions = [
-	"Transport items between machines",
-	"Auto-harvest ready cacti from plots",
-	"Convert 10 cacti into cactus juice",
-	"Sell items for cactus currency"
+	"Transporte les objets entre les machines",
+	"Récolte automatiquement les cactus mûrs",
+	"Transforme 10 cactus en jus de cactus",
+	"Vend les objets contre des cactus"
 ]
 var machine_shortcuts = ["1", "2", "3", "4"]
 

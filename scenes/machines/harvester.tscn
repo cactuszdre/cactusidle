@@ -1,13 +1,33 @@
-[gd_scene load_steps=3 format=3 uid="uid://auto_harvester"]
+[gd_scene load_steps=6 format=3 uid="uid://auto_harvester"]
 
 [ext_resource type="Script" path="res://scripts/machines/harvester.gd" id="1_script"]
 
-[sub_resource type="PrismMesh" id="PrismMesh_1"]
-size = Vector3(1.5, 1.5, 1.5)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
+albedo_color = Color(0.4, 0.4, 0.5, 1)
+metallic = 0.8
+roughness = 0.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_body"]
+material = SubResource("StandardMaterial3D_body")
+size = Vector3(1.4, 0.8, 1.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cactus"]
+albedo_color = Color(0.2, 0.6, 0.3, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cactus"]
+material = SubResource("StandardMaterial3D_cactus")
+top_radius = 0.15
+bottom_radius = 0.25
+height = 0.8
 
 [node name="Harvester" type="Node3D"]
 script = ExtResource("1_script")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.75, 0)
-mesh = SubResource("PrismMesh_1")
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+mesh = SubResource("BoxMesh_body")
+
+[node name="VisualCactus" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0, 0)
+visible = false
+mesh = SubResource("CylinderMesh_cactus")

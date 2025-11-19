@@ -23,7 +23,7 @@ var machine_scenes = [
 	preload("res://scenes/machines/processor.tscn"),
 	preload("res://scenes/machines/seller.tscn")
 ]
-var machine_names = ["Conveyor", "Harvester", "Processor", "Seller"]
+var machine_names = ["Convoyeur", "Récolteur", "Processeur", "Vendeur"]
 
 @onready var build_hint = get_node_or_null("../HUD/BuildModeHint")
 
@@ -113,7 +113,7 @@ func _handle_input() -> void:
 	# Switch Machine with Tab
 	if Input.is_action_just_pressed("next_machine"): # Bind 'Tab'
 		current_machine_idx = (current_machine_idx + 1) % machine_scenes.size()
-		print("Selected: ", machine_names[current_machine_idx])
+		print("Sélection: ", machine_names[current_machine_idx])
 		_create_ghost()
 		if factory_ui:
 			factory_ui._update_selection(current_machine_idx)
@@ -131,47 +131,96 @@ func _handle_input() -> void:
 	# Place / Remove
 	if Input.is_action_just_pressed("build_action"): # Left Click
 		if ghost_valid and ghost_instance:
-			var grid_pos = factory_manager.world_to_grid(ghost_instance.global_position)
-			factory_manager.place_machine(machine_scenes[current_machine_idx], grid_pos, current_rotation)
+			factory_manager.place_machine(machine_scenes[current_machine_idx], ghost_instance.global_position, current_rotation)
 			
 	if Input.is_action_just_pressed("remove_action"): # Right Click
-		var grid_pos = _get_grid_pos_under_mouse()
-		factory_manager.remove_machine(grid_pos)
+		var world_pos = _get_world_pos_under_mouse()
+		if world_pos != Vector3.ZERO:
+			factory_manager.remove_machine_at(world_pos)
 
 func _update_ghost() -> void:
 	if not ghost_instance: return
 	
-	var grid_pos = _get_grid_pos_under_mouse()
-	ghost_instance.global_position = factory_manager.grid_to_world(grid_pos)
+	var world_pos = _get_world_pos_under_mouse()
+	if world_pos == Vector3.ZERO:
+		ghost_instance.visible = false
+		return
+	
+	ghost_instance.visible = true
+	ghost_instance.global_position = world_pos
 	
 	# Check validity
-	if factory_manager.grid.has(grid_pos):
-		_set_color(ghost_instance, Color.RED)
-		ghost_valid = false
-	else:
+	if _check_placement_validity(world_pos):
 		_set_color(ghost_instance, Color.GREEN)
 		ghost_valid = true
+	else:
+		_set_color(ghost_instance, Color.RED)
+		ghost_valid = false
 	
 	# Point player arm at ghost
 	var player = get_tree().get_first_node_in_group("Player")
 	if player and player.has_node("PlayerModel/ShoulderRight"):
 		var arm = player.get_node("PlayerModel/ShoulderRight")
-		# We want the arm to point towards the ghost, but we need to account for the player's rotation
-		# and the arm's initial offset.
-		# A simple look_at might be enough if the arm's forward vector is correct.
-		# Assuming -Z is forward for the arm in its local space (standard in Godot)
-		
-		# We use global coordinates for look_at
 		arm.look_at(ghost_instance.global_position, Vector3.UP)
-		
-		# Optional: Clamp rotation to avoid weird twisting if needed, 
-		# but look_at usually handles it well for simple pointing.
-		# We might need to adjust rotation offset if the mesh is not aligned with -Z
-		arm.rotate_object_local(Vector3.RIGHT, deg_to_rad(90)) # Adjust if the arm mesh points down by default
+		arm.rotate_object_local(Vector3.RIGHT, deg_to_rad(90))
 
-func _get_grid_pos_under_mouse() -> Vector2i:
+func _check_placement_validity(pos: Vector3) -> bool:
+	# 1. Check collision with existing machines
+	for machine in factory_manager.machines:
+		if is_instance_valid(machine):
+			# Simple distance check for collision (radius 1.0)
+			if machine.global_position.distance_to(pos) < 1.5:
+				return false
+	
+	# 2. Check specific rules
+	var machine_name = machine_names[current_machine_idx]
+	var terrain_display = get_node_or_null("/root/Main/TerrainBonusDisplay")
+	
+	if machine_name == "Récolteur": # Harvester
+		# Must be near a Field Slot
+		if terrain_display:
+			var slots = terrain_display.get_all_slots()
+			var found_field = false
+			for slot in slots:
+				# Check distance to slot node
+				if slot.node.global_position.distance_to(pos) < 4.0: # Allow some range
+					found_field = true
+					break
+			if not found_field:
+				return false
+		else:
+			return false
+			
+	elif machine_name == "Convoyeur": # Conveyor
+		# Must be near a Harvester OR another Conveyor
+		var found_neighbor = false
+		for machine in factory_manager.machines:
+			if is_instance_valid(machine):
+				if "Harvester" in machine.name or "Conveyor" in machine.name:
+					if machine.global_position.distance_to(pos) < 3.0:
+						found_neighbor = true
+						break
+		if not found_neighbor:
+			return false
+			
+	else: # Processor, Seller
+		# Must be near a Conveyor
+		var found_conveyor = false
+		for machine in factory_manager.machines:
+			if is_instance_valid(machine) and "Conveyor" in machine.name:
+				if machine.global_position.distance_to(pos) < 3.0:
+					found_conveyor = true
+					break
+		
+		if not found_conveyor:
+			return false
+			
+	return true
+
+
+func _get_world_pos_under_mouse() -> Vector3:
 	var camera = get_viewport().get_camera_3d()
-	if not camera: return Vector2i.ZERO
+	if not camera: return Vector3.ZERO
 	
 	# Use screen center instead of mouse position
 	var screen_center = get_viewport().get_visible_rect().size / 2.0
@@ -183,8 +232,8 @@ func _get_grid_pos_under_mouse() -> Vector2i:
 	var intersect = plane.intersects_ray(ray_origin, ray_direction)
 	
 	if intersect:
-		return factory_manager.world_to_grid(intersect)
-	return Vector2i.ZERO
+		return intersect
+	return Vector3.ZERO
 
 func _set_transparency(node: Node, alpha: float) -> void:
 	# Recursive helper to set transparency on meshes
@@ -193,9 +242,26 @@ func _set_transparency(node: Node, alpha: float) -> void:
 	for child in node.get_children():
 		_set_transparency(child, alpha)
 
-func _set_color(_node: Node, _color: Color) -> void:
-	# Simple visual feedback (requires material override setup, skipping for brevity but good to have)
-	pass
+func _set_color(node: Node, color: Color) -> void:
+	# Recursive helper to set color
+	if node is MeshInstance3D:
+		# We need to ensure we're not modifying the shared material of the prefab permanently
+		# Ideally use material_override
+		if not node.material_override:
+			# Create a simple standard material if none exists or duplicate existing
+			if node.mesh and node.mesh.surface_get_material(0):
+				node.material_override = node.mesh.surface_get_material(0).duplicate()
+			else:
+				node.material_override = StandardMaterial3D.new()
+		
+		if node.material_override is StandardMaterial3D:
+			node.material_override.albedo_color = color
+			# Keep transparency
+			node.material_override.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			node.material_override.albedo_color.a = 0.5
+			
+	for child in node.get_children():
+		_set_color(child, color)
 
 func _check_license_visibility() -> void:
 	if build_hint:
@@ -210,3 +276,4 @@ func _select_machine_direct(index: int) -> void:
 			_create_ghost()
 		if factory_ui:
 			factory_ui._update_selection(index)
+

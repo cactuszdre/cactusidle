@@ -2,12 +2,8 @@ extends Node
 
 class_name FactoryManager
 
-# Grid Configuration
-const CELL_SIZE: float = 2.0
-const GRID_SIZE: int = 100
-
-# Storage: Vector2i -> Machine
-var grid: Dictionary = {}
+# Storage: List of Machine instances
+var machines: Array[Node] = []
 
 # Tick System
 var tick_timer: float = 0.0
@@ -22,41 +18,64 @@ func _process(delta: float) -> void:
 		_tick_machines()
 
 func _tick_machines() -> void:
-	# We duplicate keys to avoid issues if machines are removed during iteration
-	var coords = grid.keys()
-	for coord in coords:
-		if grid.has(coord):
-			var machine = grid[coord]
-			if is_instance_valid(machine):
+	# Iterate backwards to allow safe removal if needed
+	for i in range(machines.size() - 1, -1, -1):
+		var machine = machines[i]
+		if is_instance_valid(machine):
+			if machine.has_method("tick"):
 				machine.tick(TICK_RATE)
-			else:
-				grid.erase(coord)
+		else:
+			machines.remove_at(i)
 
-func place_machine(machine_scene: PackedScene, grid_pos: Vector2i, rotation_dir: int) -> bool:
-	if grid.has(grid_pos):
-		return false # Occupied
-		
+func place_machine(machine_scene: PackedScene, position: Vector3, rotation_dir: int) -> bool:
+	# Collision check should be done by BuilderController before calling this
+	
 	var machine_instance = machine_scene.instantiate()
 	add_child(machine_instance)
 	
-	machine_instance.global_position = grid_to_world(grid_pos)
-	machine_instance.setup(grid_pos, rotation_dir)
+	machine_instance.global_position = position
+	# We might need to adjust setup to not rely on grid pos if it uses it
+	if machine_instance.has_method("setup"):
+		# Passing Vector2i.ZERO as dummy grid pos if needed, or update machine scripts
+		machine_instance.setup(Vector2i.ZERO, rotation_dir) 
 	
-	grid[grid_pos] = machine_instance
+	machines.append(machine_instance)
 	return true
 
-func remove_machine(grid_pos: Vector2i) -> void:
-	if grid.has(grid_pos):
-		var machine = grid[grid_pos]
+func remove_machine_at(position: Vector3, radius: float = 1.0) -> void:
+	var closest_machine = null
+	var min_dist = radius
+	
+	for machine in machines:
 		if is_instance_valid(machine):
-			machine.queue_free()
-		grid.erase(grid_pos)
+			var dist = machine.global_position.distance_to(position)
+			if dist < min_dist:
+				min_dist = dist
+				closest_machine = machine
+	
+	if closest_machine:
+		machines.erase(closest_machine)
+		closest_machine.queue_free()
 
-func get_machine_at(grid_pos: Vector2i) -> Node:
-	return grid.get(grid_pos)
+func get_machines_of_type(type_name: String) -> Array:
+	var result = []
+	for machine in machines:
+		if is_instance_valid(machine) and machine.name.begins_with(type_name): # Simple check, or use is_class/groups
+			result.append(machine)
+	return result
 
-func grid_to_world(grid_pos: Vector2i) -> Vector3:
-	return Vector3(grid_pos.x * CELL_SIZE, 0, grid_pos.y * CELL_SIZE)
+func get_all_machines() -> Array:
+	return machines
 
-func world_to_grid(world_pos: Vector3) -> Vector2i:
-	return Vector2i(round(world_pos.x / CELL_SIZE), round(world_pos.z / CELL_SIZE))
+func get_closest_machine(position: Vector3, radius: float = 1.5) -> Node:
+	var closest_machine = null
+	var min_dist = radius
+	
+	for machine in machines:
+		if is_instance_valid(machine):
+			var dist = machine.global_position.distance_to(position)
+			if dist < min_dist:
+				min_dist = dist
+				closest_machine = machine
+	return closest_machine
+

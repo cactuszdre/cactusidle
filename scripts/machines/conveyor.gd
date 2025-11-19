@@ -10,8 +10,8 @@ func tick(_delta: float) -> void:
 		return
 		
 	# Try to move item to next machine
-	var target_pos = get_output_pos()
-	var target_machine = factory_manager.get_machine_at(target_pos)
+	var target_pos = get_output_world_pos()
+	var target_machine = factory_manager.get_closest_machine(target_pos)
 	
 	if target_machine and target_machine.can_accept_item(held_item, (rotation_dir + 2) % 4):
 		target_machine.inject_item(held_item)
