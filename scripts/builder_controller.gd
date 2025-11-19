@@ -119,13 +119,13 @@ func _handle_input() -> void:
 			factory_ui._update_selection(current_machine_idx)
 	
 	# Keyboard shortcuts 1-4
-	if Input.is_action_just_pressed("ui_text_1"):
+	if Input.is_key_pressed(KEY_1) and not Input.is_key_pressed(KEY_SHIFT):
 		_select_machine_direct(0)
-	elif Input.is_action_just_pressed("ui_text_2"):
+	elif Input.is_key_pressed(KEY_2) and not Input.is_key_pressed(KEY_SHIFT):
 		_select_machine_direct(1)
-	elif Input.is_action_just_pressed("ui_text_3"):
+	elif Input.is_key_pressed(KEY_3) and not Input.is_key_pressed(KEY_SHIFT):
 		_select_machine_direct(2)
-	elif Input.is_action_just_pressed("ui_text_4"):
+	elif Input.is_key_pressed(KEY_4) and not Input.is_key_pressed(KEY_SHIFT):
 		_select_machine_direct(3)
 		
 	# Place / Remove
