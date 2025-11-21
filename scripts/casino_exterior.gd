@@ -16,6 +16,10 @@ func _ready() -> void:
 	if teleport_manager:
 		teleport_manager.exterior_spawn_point = $EntranceGroup/SpawnPoint
 	
+	# Disable teleport area until payment
+	$EntranceGroup/TeleportArea.monitoring = false
+	$EntranceGroup/TeleportArea.monitorable = false
+	
 	# Connect triggers
 	$EntranceGroup/TeleportArea.body_entered.connect(_on_teleport_entered)
 	$EntranceGroup/InteractionArea.body_entered.connect(_on_interact_entered)
@@ -24,21 +28,23 @@ func _ready() -> void:
 	_update_prompt()
 	_update_animation()
 	
-	# Generate collision for the casino model
-	_generate_casino_collision()
+	# REMOVED: Automatic collision generation causes freezes
+	# Generate collisions manually in the editor instead
+	# _generate_casino_collision()
 
-func _generate_casino_collision() -> void:
-	var model = $Model
-	_add_collision_recursive(model)
+# DISABLED: This function causes severe performance issues
+# func _generate_casino_collision() -> void:
+# 	var model = $Model
+# 	_add_collision_recursive(model)
+# 
+# func _add_collision_recursive(node: Node) -> void:
+# 	if node is MeshInstance3D:
+# 		node.create_trimesh_collision()
+# 	
+# 	for child in node.get_children():
+# 		_add_collision_recursive(child)
 
-func _add_collision_recursive(node: Node) -> void:
-	if node is MeshInstance3D:
-		node.create_trimesh_collision()
-	
-	for child in node.get_children():
-		_add_collision_recursive(child)
-
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if is_player_near_guard and not is_unlocked:
 		if Input.is_key_pressed(KEY_E):
 			_try_pay_entry()
@@ -48,6 +54,11 @@ func _try_pay_entry() -> void:
 		game_manager.add_cactus(-entry_price)
 		is_unlocked = true
 		print("🎰 Accès au Casino débloqué !")
+		
+		# Enable teleport area
+		$EntranceGroup/TeleportArea.monitoring = true
+		$EntranceGroup/TeleportArea.monitorable = true
+		
 		_update_prompt()
 		_update_animation()
 		
@@ -64,15 +75,8 @@ func _try_pay_entry() -> void:
 
 func _on_teleport_entered(body: Node3D) -> void:
 	if body.is_in_group("Player"):
-		if is_unlocked:
-			if teleport_manager:
-				teleport_manager.teleport_to_interior()
-		else:
-			print("⛔ Le garde vous bloque le passage !")
-			# Push player back slightly?
-			if body.has_method("set_velocity"):
-				var dir = (body.global_position - global_position).normalized()
-				body.velocity = dir * 5.0
+		if teleport_manager:
+			teleport_manager.teleport_to_interior()
 
 func _on_interact_entered(body: Node3D) -> void:
 	if body.is_in_group("Player") and not is_unlocked:
