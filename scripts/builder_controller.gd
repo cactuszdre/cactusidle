@@ -276,4 +276,3 @@ func _select_machine_direct(index: int) -> void:
 			_create_ghost()
 		if factory_ui:
 			factory_ui._update_selection(index)
-

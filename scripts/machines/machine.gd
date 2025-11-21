@@ -47,4 +47,3 @@ func get_input_world_pos() -> Vector3:
 		3: dir = Vector3(1, 0, 0)  # East is behind West
 	
 	return global_position + (dir * 2.0)
-

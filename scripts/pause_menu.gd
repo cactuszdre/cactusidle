@@ -4,11 +4,14 @@ extends Control
 @onready var quit_button: Button = %QuitButton
 @onready var sensitivity_slider: HSlider = %SensitivitySlider
 @onready var sensitivity_value_label: Label = %SensitivityValue
+@onready var music_volume_slider: HSlider = %MusicVolumeSlider
+@onready var music_volume_value_label: Label = %MusicVolumeValue
 @onready var keybind_container: VBoxContainer = %KeybindContainer
 
 var is_paused: bool = false
 var previous_mouse_mode: Input.MouseMode = Input.MOUSE_MODE_VISIBLE
 var player: Node = null
+var audio_manager: Node = null
 
 # Keybinds configuration
 var actions_to_bind = ["avancer", "reculer", "aller_gauche", "aller_droite"]
@@ -29,6 +32,7 @@ func _ready() -> void:
 	resume_button.pressed.connect(toggle_pause)
 	quit_button.pressed.connect(quit_game)
 	sensitivity_slider.value_changed.connect(_on_sensitivity_changed)
+	music_volume_slider.value_changed.connect(_on_music_volume_changed)
 	
 	_setup_fullscreen_toggle()
 	_setup_keybinds()
@@ -38,6 +42,13 @@ func _ready() -> void:
 	if player:
 		sensitivity_slider.value = player.mouse_sensitivity
 		_update_sensitivity_label(player.mouse_sensitivity)
+	
+	# Find audio manager and set initial volume
+	audio_manager = get_node_or_null("/root/Main/AudioManager")
+	if audio_manager:
+		var current_volume = audio_manager.get_music_volume()
+		music_volume_slider.value = current_volume
+		_update_music_volume_label(current_volume)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_F11:
@@ -153,3 +164,12 @@ func _toggle_fullscreen_mode() -> void:
 	
 	if fullscreen_checkbox:
 		fullscreen_checkbox.set_pressed_no_signal(not is_fullscreen)
+
+func _on_music_volume_changed(value: float) -> void:
+	if audio_manager:
+		audio_manager.set_music_volume(value)
+		audio_manager.save_settings()
+	_update_music_volume_label(value)
+
+func _update_music_volume_label(value: float) -> void:
+	music_volume_value_label.text = "%.0f%%" % value

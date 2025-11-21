@@ -18,6 +18,8 @@
 [ext_resource type="PackedScene" uid="uid://6s4m6j1u67jc" path="res://scenes/casino_exterior.tscn" id="13_exterior"]
 [ext_resource type="PackedScene" path="res://scenes/casino.tscn" id="14_interior"]
 [ext_resource type="Script" uid="uid://cr2q7i86ydkbg" path="res://scripts/teleport_manager.gd" id="15_teleport_manager"]
+[ext_resource type="Script" path="res://scripts/audio_manager.gd" id="16_audio_manager"]
+[ext_resource type="AudioStream" path="res://audio/soft,_soothing_piano_#2-1763681041297.mp3" id="17_background_music"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_jyhfs"]
 sky_top_color = Color(0.2, 0.45, 0.85, 1)
@@ -288,6 +290,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -200, 0)
 [node name="TeleportManager" type="Node" parent="."]
 script = ExtResource("15_teleport_manager")
 
+[node name="AudioManager" type="Node" parent="."]
+script = ExtResource("16_audio_manager")
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("17_background_music")
+autoplay = true
+bus = &"Music"
+
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource("2_sugp2")
 
@@ -485,6 +495,30 @@ min_value = 0.001
 max_value = 0.02
 step = 0.001
 value = 0.005
+
+[node name="MusicVolumeSection" type="VBoxContainer" parent="HUD/PauseMenu/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HUD/PauseMenu/CenterContainer/VBoxContainer/MusicVolumeSection"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HUD/PauseMenu/CenterContainer/VBoxContainer/MusicVolumeSection/HBoxContainer"]
+layout_mode = 2
+text = "Volume Musique"
+
+[node name="MusicVolumeValue" type="Label" parent="HUD/PauseMenu/CenterContainer/VBoxContainer/MusicVolumeSection/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+text = "100%"
+
+[node name="MusicVolumeSlider" type="HSlider" parent="HUD/PauseMenu/CenterContainer/VBoxContainer/MusicVolumeSection"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.0
+max_value = 100.0
+step = 1.0
+value = 100.0
 
 [node name="KeybindsLabel" type="Label" parent="HUD/PauseMenu/CenterContainer/VBoxContainer"]
 layout_mode = 2

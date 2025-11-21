@@ -12,7 +12,7 @@ dest_files=["res://.godot/imported/soft,_soothing_piano_#2-1763681041297.mp3-556
 
 [params]
 
-loop=false
+loop=true
 loop_offset=0
 bpm=0
 beat_count=0
