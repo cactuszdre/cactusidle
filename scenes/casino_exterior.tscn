@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://6s4m6j1u67jc"]
+[gd_scene load_steps=11 format=3 uid="uid://6s4m6j1u67jc"]
 
 [ext_resource type="PackedScene" uid="uid://dudqur4omjy2r" path="res://models/103f7c7c88dc286f0ad411cb3496ed3f.glb" id="1_model"]
 [ext_resource type="Script" uid="uid://b4i7vpf7skbt7" path="res://scripts/casino_exterior.gd" id="1_script"]
@@ -34,6 +34,9 @@ _data = {
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_interact"]
 size = Vector3(4, 3, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_k2y5e"]
+size = Vector3(8.612152, 9.807373, 10.410187)
 
 [node name="CasinoExterior" type="Node3D"]
 script = ExtResource("1_script")
@@ -80,3 +83,17 @@ billboard = 1
 text = "Garde: \"Halte !\""
 font_size = 48
 outline_size = 6
+
+[node name="CasinoCollision" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CasinoCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.021429, 5.161255, -1.6122589)
+shape = SubResource("BoxShape3D_k2y5e")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="CasinoCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.198452, 5.724347, -1.4865723)
+shape = SubResource("BoxShape3D_k2y5e")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="CasinoCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.053129196, 4.4315624, -5.9092865)
+shape = SubResource("BoxShape3D_k2y5e")
