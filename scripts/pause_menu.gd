@@ -20,6 +20,7 @@ var action_names = {
 }
 var waiting_for_input: String = ""
 var active_button: Button = null
+var fullscreen_checkbox: CheckBox = null
 
 func _ready() -> void:
 	visible = false
@@ -29,6 +30,7 @@ func _ready() -> void:
 	quit_button.pressed.connect(quit_game)
 	sensitivity_slider.value_changed.connect(_on_sensitivity_changed)
 	
+	_setup_fullscreen_toggle()
 	_setup_keybinds()
 	
 	# Find player to set initial sensitivity
@@ -38,6 +40,10 @@ func _ready() -> void:
 		_update_sensitivity_label(player.mouse_sensitivity)
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_F11:
+		_toggle_fullscreen_mode()
+		get_viewport().set_input_as_handled()
+
 	if waiting_for_input != "":
 		if event is InputEventKey and event.pressed:
 			_remap_key(waiting_for_input, event)
@@ -55,9 +61,9 @@ func toggle_pause() -> void:
 	
 	if is_paused:
 		previous_mouse_mode = Input.mouse_mode
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	else:
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func quit_game() -> void:
 	get_tree().quit()
@@ -112,3 +118,38 @@ func _remap_key(action: String, event: InputEventKey) -> void:
 	
 	waiting_for_input = ""
 	active_button = null
+
+func _setup_fullscreen_toggle() -> void:
+	fullscreen_checkbox = CheckBox.new()
+	fullscreen_checkbox.text = "Plein écran (F11)"
+	fullscreen_checkbox.toggled.connect(_on_fullscreen_toggled)
+	
+	var window = get_window()
+	var mode = window.mode
+	fullscreen_checkbox.button_pressed = (mode == Window.MODE_FULLSCREEN or mode == Window.MODE_EXCLUSIVE_FULLSCREEN)
+	
+	# Add to the same container as the buttons if possible
+	if quit_button and quit_button.get_parent():
+		quit_button.get_parent().add_child(fullscreen_checkbox)
+		# Move it before the quit button
+		quit_button.get_parent().move_child(fullscreen_checkbox, quit_button.get_index())
+
+func _on_fullscreen_toggled(is_fullscreen: bool) -> void:
+	var window = get_window()
+	if is_fullscreen:
+		window.mode = Window.MODE_FULLSCREEN
+	else:
+		window.mode = Window.MODE_WINDOWED
+
+func _toggle_fullscreen_mode() -> void:
+	var window = get_window()
+	var current_mode = window.mode
+	var is_fullscreen = (current_mode == Window.MODE_FULLSCREEN or current_mode == Window.MODE_EXCLUSIVE_FULLSCREEN)
+	
+	if is_fullscreen:
+		window.mode = Window.MODE_WINDOWED
+	else:
+		window.mode = Window.MODE_FULLSCREEN
+	
+	if fullscreen_checkbox:
+		fullscreen_checkbox.set_pressed_no_signal(not is_fullscreen)

@@ -23,6 +23,7 @@ const FIELD_CONFIG = {
 
 func _ready() -> void:
 	_initialize_fields()
+	
 	if field_prompt:
 		field_prompt.visible = false
 
@@ -45,8 +46,8 @@ func _process(delta: float) -> void:
 					_update_slot_visuals(slot, 1.0)
 
 	# Update prompt based on what the player is looking at
-	if _current_field_name != "":
-		_handle_interaction_prompt()
+	# Update prompt based on what the player is looking at
+	_handle_interaction_prompt()
 
 func _handle_interaction_prompt() -> void:
 	if not field_prompt: return
@@ -65,9 +66,6 @@ func _handle_interaction_prompt() -> void:
 		field_prompt.visible = false
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _current_field_name == "":
-		return
-		
 	if event is InputEventMouseButton and event.pressed:
 		var hovered_slot = _get_hovered_slot()
 		if hovered_slot:
@@ -111,19 +109,19 @@ func get_all_slots() -> Array:
 
 func _get_hovered_slot() -> Dictionary:
 	var camera = get_viewport().get_camera_3d()
-	if not camera: return {}
+	if not camera: 
+		return {}
 	
-	var mouse_pos = get_viewport().get_mouse_position()
-	# If mouse is captured, use center of screen
-	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		mouse_pos = get_viewport().size / 2.0
-		
-	var from = camera.project_ray_origin(mouse_pos)
-	var to = from + camera.project_ray_normal(mouse_pos) * 100.0
+	# Use the center of the viewport for raycasting (crosshair position)
+	var center_pos = get_viewport().get_visible_rect().size / 2.0
+	
+	var from = camera.project_ray_origin(center_pos)
+	var to = from + camera.project_ray_normal(center_pos) * 100.0 # Increased range for interaction
 	
 	var space_state = get_world_3d().direct_space_state
 	var query = PhysicsRayQueryParameters3D.create(from, to)
 	query.collide_with_bodies = true
+	query.collide_with_areas = false # Disable area collision to avoid hitting the field trigger
 	
 	# Exclude the player itself from the raycast
 	var player = get_tree().get_first_node_in_group("Player")
@@ -133,9 +131,11 @@ func _get_hovered_slot() -> Dictionary:
 	var result = space_state.intersect_ray(query)
 	if result:
 		var collider = result.collider
-		# Check if this collider belongs to any slot in the current field
-		if _fields_data.has(_current_field_name):
-			var field_data = _fields_data[_current_field_name]
+		# Check if this collider belongs to any slot in ANY unlocked field
+		for field_name in _fields_data:
+			var field_data = _fields_data[field_name]
+			if not field_data.node.visible: continue
+			
 			for slot in field_data.slots:
 				if slot.collider == collider:
 					return slot
@@ -154,14 +154,18 @@ func unlock_field(option_name: String) -> void:
 				slot.collider.get_child(0).disabled = false
 
 func _initialize_fields() -> void:
-	if not _fields_data.is_empty(): return
-	if fields_root.is_empty(): return
+	if not _fields_data.is_empty(): 
+		return
+	if fields_root.is_empty(): 
+		return
 	
 	var root = get_node_or_null(fields_root)
-	if not root: return
+	if not root: 
+		return
 	
 	for child in root.get_children():
 		if not child is Node3D: continue
+
 		
 		var config = FIELD_CONFIG.get(child.name, FIELD_CONFIG["SmallPlot"])
 		var slots_data = []

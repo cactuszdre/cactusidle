@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://casino_building"]
 
-[ext_resource type="Script" path="res://scripts/casino.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/casino_interior.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://slot_machine" path="res://scenes/slot_machine.tscn" id="2_slots"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
@@ -33,32 +33,22 @@ emission_energy_multiplier = 2.0
 material = SubResource("StandardMaterial3D_neon")
 size = Vector3(12, 2, 0.5)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_guard"]
-albedo_color = Color(0.1, 0.1, 0.1, 1)
+[sub_resource type="BoxShape3D" id="BoxShape3D_exit"]
+size = Vector3(6, 4, 2)
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_guard"]
-material = SubResource("StandardMaterial3D_guard")
-radius = 0.4
-height = 1.8
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glasses"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_black"]
 albedo_color = Color(0, 0, 0, 1)
-metallic = 0.8
-roughness = 0.2
+shading_mode = 0
 
-[sub_resource type="BoxMesh" id="BoxMesh_glasses"]
-material = SubResource("StandardMaterial3D_glasses")
-size = Vector3(0.5, 0.15, 0.2)
+[sub_resource type="BoxMesh" id="BoxMesh_curtain"]
+material = SubResource("StandardMaterial3D_black")
+size = Vector3(6, 6, 0.1)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_entrance"]
-size = Vector3(6, 4, 4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_door"]
-material = SubResource("StandardMaterial3D_gold")
-size = Vector3(4, 5, 0.5)
-
-[node name="Casino" type="Node3D"]
+[node name="CasinoInterior" type="Node3D"]
 script = ExtResource("1_script")
+
+[node name="SpawnPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 15)
 
 [node name="Architecture" type="CSGCombiner3D" parent="."]
 use_collision = true
@@ -137,37 +127,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, -8)
 [node name="SlotMachine4" parent="SlotMachines" instance=ExtResource("2_slots")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1, -8)
 
-[node name="Bodyguard" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 22)
+[node name="ExitArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 18)
 
-[node name="Body" type="MeshInstance3D" parent="Bodyguard"]
-mesh = SubResource("CapsuleMesh_guard")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExitArea"]
+shape = SubResource("BoxShape3D_exit")
 
-[node name="Glasses" type="MeshInstance3D" parent="Bodyguard"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0.3)
-mesh = SubResource("BoxMesh_glasses")
-
-[node name="EntranceArea" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 24)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="EntranceArea"]
-shape = SubResource("BoxShape3D_entrance")
-
-[node name="PromptLabel" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 22)
+[node name="ExitPrompt" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 18)
 visible = false
 billboard = 1
-text = "Garde: \"Halte !\""
+text = "[E] Sortir"
 font_size = 48
 outline_size = 6
 
-[node name="DoorAnim" type="Node" parent="."]
+[node name="BlackCurtain" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 19.8)
+mesh = SubResource("BoxMesh_curtain")
 
-[node name="BigDoor" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 20)
+[node name="InvisibleWall" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 20)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="BigDoor"]
-mesh = SubResource("BoxMesh_door")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BigDoor"]
-shape = SubResource("BoxShape3D_entrance")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InvisibleWall"]
+shape = SubResource("BoxShape3D_exit")

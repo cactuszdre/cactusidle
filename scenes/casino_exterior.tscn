@@ -1,0 +1,82 @@
+[gd_scene load_steps=10 format=3 uid="uid://6s4m6j1u67jc"]
+
+[ext_resource type="PackedScene" uid="uid://dudqur4omjy2r" path="res://models/103f7c7c88dc286f0ad411cb3496ed3f.glb" id="1_model"]
+[ext_resource type="Script" uid="uid://b4i7vpf7skbt7" path="res://scripts/casino_exterior.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://o8fdfns47vhs" path="res://models/garde.glb" id="2_guard_model"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_teleport"]
+size = Vector3(0.24890137, 0.3770752, 0.052490234)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_guard"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="Animation" id="Animation_halt"]
+resource_name = "halt"
+loop_mode = 1
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Model/Armature/Skeleton3D:Bone")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array()
+
+[sub_resource type="Animation" id="Animation_idle"]
+resource_name = "idle"
+loop_mode = 1
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_guard"]
+_data = {
+&"halt": SubResource("Animation_halt"),
+&"idle": SubResource("Animation_idle")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_interact"]
+size = Vector3(4, 3, 4)
+
+[node name="CasinoExterior" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+transform = Transform3D(30, 0, 0, 0, 30, 0, 0, 0, 30, 0, 0, 0)
+
+[node name="EntranceGroup" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+
+[node name="SpawnPoint" type="Marker3D" parent="EntranceGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+
+[node name="TeleportArea" type="Area3D" parent="EntranceGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -2)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EntranceGroup/TeleportArea"]
+shape = SubResource("BoxShape3D_teleport")
+
+[node name="Bodyguard" type="StaticBody3D" parent="EntranceGroup"]
+
+[node name="Model" parent="EntranceGroup/Bodyguard" instance=ExtResource("2_guard_model")]
+transform = Transform3D(2.9998808, 0, 0.026755933, 0, 3, 0, -0.026755933, 0, 2.9998808, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EntranceGroup/Bodyguard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_guard")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="EntranceGroup/Bodyguard"]
+libraries = {
+&"": SubResource("AnimationLibrary_guard")
+}
+
+[node name="InteractionArea" type="Area3D" parent="EntranceGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 1)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EntranceGroup/InteractionArea"]
+shape = SubResource("BoxShape3D_interact")
+
+[node name="PromptLabel" type="Label3D" parent="EntranceGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 0)
+visible = false
+billboard = 1
+text = "Garde: \"Halte !\""
+font_size = 48
+outline_size = 6
