@@ -1223,10 +1223,6 @@ shape = SubResource("BoxShape3D_field_area")
 [node name="FactoryManager" type="Node" parent="."]
 script = ExtResource("7_factory")
 
-[node name="TerrainBonusDisplay2" type="Node3D" parent="."]
-script = ExtResource("8_bonus_display")
-fields_root = NodePath("Fields")
-
 [node name="BuilderController" type="Node" parent="."]
 script = ExtResource("8_builder")
 factory_manager_path = NodePath("../FactoryManager")

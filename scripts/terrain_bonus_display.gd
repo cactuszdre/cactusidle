@@ -14,7 +14,7 @@ var _fields_data: Dictionary = {}
 var _current_field_name: String = ""
 
 @onready var game_manager = get_node_or_null("/root/Main/GameManager")
-@onready var field_prompt = get_node_or_null("../HUD/FieldPrompt")
+@onready var field_prompt = get_node_or_null("/root/Main/HUD/FieldPrompt")
 
 const FIELD_CONFIG = {
 	"SmallPlot": { "duration": 10.0, "reward": 50 },
